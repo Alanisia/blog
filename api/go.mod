@@ -2,4 +2,6 @@ module blog
 
 go 1.15
 
-require github.com/dave/jennifer v1.5.0 // indirect
+require (
+	go.uber.org/zap v1.20.0 // indirect
+)
