@@ -1,11 +1,11 @@
 <template>
   <el-container>
     <el-header>
-      <Navbar hasLogin=''></Navbar>
+      <Navbar hasLogin=""></Navbar>
     </el-header>
-    <el-main>
-    <router-view></router-view>
-    </el-main>
+     <el-main>
+        <router-view></router-view>
+     </el-main>
   </el-container>
 </template>
 
@@ -17,13 +17,11 @@ export default {
   components: { Navbar },
   data() {
     return {
-    token: '',
+      token: "",
     };
   },
   created() {},
-  methods: {
-
-  },
+  methods: {},
 };
 </script>
 

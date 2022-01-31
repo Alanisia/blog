@@ -33,7 +33,9 @@ export default {
   },
   methods: {
     search: function () {},
-    newArticle: function () {},
+    newArticle: function () {
+    this.$router.push('/editor');
+    },
   },
 };
 </script>
