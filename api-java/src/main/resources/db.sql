@@ -23,18 +23,18 @@ create table `operation`(
 drop table if exists `permission`;
 create table `permission`(
 	`id` tinyint not null auto_increment,
-    `name` varchar(32) not null,
     `role_id` tinyint not null,
-    `opr_id` tinyint not null,
+    `operation_id` tinyint not null,
     `create_at` datetime not null,
     `update_at` datetime not null,
-    primary key(`id`)
+    primary key(`id`),
+    key `key_role_id`(`role_id`)
 )engine=InnoDB default charset=utf8mb4;
 
 drop table if exists `account`;
 create table `account`(
 	`id` bigint not null auto_increment,
-    `permission_id` tinyint not null,
+    `role_id` tinyint not null,
     `email` varchar(255) not null,
     `username` varchar(32) not null,
     `password` varchar(20) not null,
@@ -77,13 +77,34 @@ create table `category`(
 drop table if exists `blog`;
 create table `blog`(
 	`id` bigint not null auto_increment,
+    `account_id` bigint not null,
     `category_id` tinyint not null,
-    -- `tag_id` tinyint not null,
     `title` varchar(128) not null,
     `content` text not null,
+    `like` int not null,
+    `star` int not null,
     `create_at` datetime not null,
     `update_at` datetime not null,
     primary key(`id`)
+)engine=InnoDB default charset=utf8mb4;
+
+drop table if exists `star_blog`;
+create table `star_blog`(
+    `id` bigint not null,
+    `blog_id` bigint not null,
+    `account_id` bigint not null,
+    `create_at` datetime not null,
+    primary key(`id`),
+    key `key_account_id`(`account_id`)
+)engine=InnoDB default charset=utf8mb4;
+
+drop table if exists `blog_history`(
+    `id` bigint not null,
+    `account_id` bigint not null,
+    `blog_id` bigint not null,
+    `create_at` datetime not null,
+    primary key(`id`),
+    key `key_account_id`(`account_id`)
 )engine=InnoDB default charset=utf8mb4;
 
 drop table if exists `tag_blog`;
@@ -130,4 +151,12 @@ create table `opr_log`(
   `action` varchar(128) not null,
   `create_at` datetime not null,
   primary key(`id`)
+)engine=InnoDB default charset=utf8mb4;
+
+drop table if exists `user_conf`;
+create table `user_conf`(
+    `id` bigint not null,
+    `histories` int not null,
+    `newest` int not null,
+    primary key(`id`)
 )engine=InnoDB default charset=utf8mb4;

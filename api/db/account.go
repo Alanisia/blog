@@ -2,7 +2,6 @@ package db
 
 import (
 	"blog/model"
-	"log"
 )
 
 func AccountList() {

@@ -67,8 +67,17 @@ type Blog struct {
 	UpdateAt   time.Time
 }
 
+type TagBlog struct {
+	Id       int64
+	BlogId   int64
+	TagId    int
+	CreateAt time.Time
+}
+
 type Comment struct {
 	Id        int64
+	CommentId int64
+	TargetId  int64
 	AccountId int64
 	BlogId    int64
 	Content   string
@@ -77,12 +86,18 @@ type Comment struct {
 	UpdateAt  time.Time
 }
 
-type Reply struct {
+type Message struct {
 	Id        int64
-	CommentId int64
 	AccountId int64
+	SenderId  int64
 	Content   string
-	Like      int
 	CreateAt  time.Time
-	UpdateAt  time.Time
+}
+
+type OprLog struct {
+	Id          int64
+	OperatorId  int64
+	OperationId int
+	Action      string
+	CreateAt    time.Time
 }
