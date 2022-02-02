@@ -24,10 +24,12 @@ public class BlogService {
   }
 
   public void updateBlog(long id) {
+    
 
   }
 
   public List<BlogDto> ListOfNewest() {
     // List<BlogDto> blogs = blogDao.newest();
+    return null;
   }
 }

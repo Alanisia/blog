@@ -1,8 +1,10 @@
 package alanisia.blog.common.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public enum Result {
   OK(0, "OK"),
 
@@ -11,13 +13,9 @@ public enum Result {
   PASSWORD_INCORRECT(4, "Password incorrect"),
   AUTHORIZE_FAILED(8, "Authorize failed"),
   CAPTCHA_ERROR(10, "Captcha error"),
+  TOKEN_EXPIRED(15, "Token expired"),
   NO_PERMISSION(16, "No permission");
 
   private final int code;
   private final String message;
-
-  Result(int code, String message) {
-    this.code = code;
-    this.message = message;
-  }
 }

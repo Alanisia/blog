@@ -9,7 +9,7 @@ import java.util.Date;
 @Accessors(chain = true)
 public class Account {
   private long id;
-  private int permissionId;
+  private int roleId;
   private String email;
   private String username;
   private String password;

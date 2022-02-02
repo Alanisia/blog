@@ -14,7 +14,7 @@ public class AccountController {
 
   @PostMapping("/login")
   public R login(String email, String password, String captchaCode, String captchaImage) {
-    return R.ok();
+    return new R(accountService.login(email, password, captchaCode, captchaImage));
   }
 
   @PostMapping("/register")
@@ -25,7 +25,7 @@ public class AccountController {
 
   @GetMapping("/captcha")
   public R captcha() {
-    return new R(Result.OK).setData(accountService.captcha());
+    return new R(Result.OK).setData(accountService.captcha().getBase64());
   }
 
   @PostMapping("/logout")
