@@ -26,7 +26,9 @@
           >添加标签</el-button
         >
       </el-form-item>
-      <el-form-item> </el-form-item>
+      <el-form-item>
+        <el-input v-model="editorForm.content"></el-input>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="display">演示</el-button>
         <el-button type="primary" @click="save">保存</el-button>
@@ -42,6 +44,8 @@
 <script>
 import Display from "@/components/editor/Display";
 import TagsAdding from "@/components/editor/TagsAdding";
+import axios from "axios";
+import util from "../../util";
 
 export default {
   name: "Editor",
@@ -52,18 +56,78 @@ export default {
       editorForm: {
         title: "",
         category: 0,
+        content,
       },
     };
   },
   methods: {
     reset: function () {
+      // TODO: useless
       this.$refs.editorForm.resetFields();
     },
     display: function () {
       this.$refs.displayDialog.displayVisible = true;
     },
-    publish: function () {},
-    save: function () {},
+    publish: function () {
+      if (localStorage.getItem(util.commonToken) === null) {
+        this.$message({
+          message: "未登录，请先登录",
+          type: 'error'
+        });
+        this.$router.push("/login");
+      } else {
+        axios
+          .post("/blog/publish", {
+            title: this.editorForm.title,
+            category: this.editorForm.category,
+            content: this.editorForm.content,
+          })
+          .then((res) => {
+            const data = res.data;
+            if (data.code === util.result.TOKEN_EXPIRED) {
+              this.$message({
+                message: '令牌已过期，请重新登录',
+                type: 'error'
+              });
+              this.$router.push('/login');
+            } else {
+              this.$message({
+                message: '发表成功',
+                type: 'success'
+              })
+              this.$router.push('/');
+            }
+          });
+      }
+    },
+    save: function () {
+      if (localStorage.getItem(util.commonToken) === null) {
+        this.$message({
+          message: "未登录，请先登录",
+          type: 'error'
+        });
+        this.$router.push("/login");
+      } else {
+        axios.post("/blog/save", {
+          title: this.editorForm.title,
+          category: this.editorForm.category,
+          content: this.editorForm.content,
+        }).then(res => {
+          const data = res.data;
+          if (data.code === util.result.TOKEN_EXPIRED) {
+              this.$message({
+                message: '令牌已过期，请重新登录',
+                type: 'error'
+              });
+            } else {
+              this.$message({
+                message: '保存成功',
+                type: 'success'
+              })
+            }
+        });
+      }
+    },
     addTags: function () {
       this.$refs.tagsAddDialog.tagsAddVisible = true;
     },

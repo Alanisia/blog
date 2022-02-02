@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+import util from '../../util';
 export default {
   name: "Search",
   data() {
@@ -32,9 +34,18 @@ export default {
     };
   },
   methods: {
-    search: function () {},
+    search: function () {
+      axios.post('/search', {
+        'keyword': this.searchForm.keyword
+      }).then(res => {
+        const data = res.data;
+        // TODO
+        console.debug(data);
+      });
+    },
     newArticle: function () {
-    this.$router.push('/editor');
+      if (localStorage.getItem(util.commonToken) === null) this.$router.push('/login');
+      else this.$router.push('/editor');
     },
   },
 };

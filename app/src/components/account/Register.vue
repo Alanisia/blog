@@ -46,16 +46,17 @@
         </el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="register">
-        注册
-        </el-button>
+        <el-button type="primary" @click="register"> 注册 </el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+import md5 from 'blueimp-md5';
 import util from "@/util";
+
 export default {
   name: "Register",
   data() {
@@ -128,12 +129,38 @@ export default {
       this.$refs.registerForm.validate((valid) => {
         if (!valid) return false;
         else {
-        this.$router.push('/login');
-        return true;
+          axios
+            .post("/register", {
+              'email': this.registerForm.email,
+              'username': this.registerForm.username,
+              'password': md5(this.registerForm.password),
+              'captchaCode': this.registerForm.captchaCode,
+              'captchaImage': this.registerForm.captchaImage
+            })
+            .then((res) => {
+              const data = res.data;
+              if (!data.code) {
+                this.$router.push("/login");
+                return true;
+              } else {
+                this.$message({
+                  message: data.message,
+                  type: 'error',
+                });
+                return false;
+              }
+            });
         }
       });
     },
-    updateCaptcha: function () {},
+    updateCaptcha: function () {
+      axios
+      .get('/captcha')
+      .then(res => {
+        const data = res.data;
+        this.registerForm.captchaImage = `data:image/jpg;base64,${data}`;
+      });
+    },
   },
 };
 </script>

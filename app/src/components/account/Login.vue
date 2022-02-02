@@ -36,8 +36,10 @@
   </div>
 </template>
 
-                                                                                                                    <script>
+<script>
 import util from "@/util";
+import axios from "axios";
+import md5 from "blueimp-md5";
 
 export default {
   name: "Login",
@@ -88,19 +90,34 @@ export default {
     login: function () {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          this.$router.push("/");
-          return true;
+          axios
+            .post("/login", {
+              email: this.loginForm.account,
+              password: md5(this.loginForm.password),
+              captchaCode: this.loginForm.captchaText,
+              captchaImage: this.loginForm.captchaImage,
+            })
+            .then((res) => {
+              const data = res.data;
+              if (!data.code) {
+                this.$router.push("/");
+                return true;
+              } else {
+                this.$message({
+                  message: data.message,
+                  type: 'error',
+                });
+                return false;
+              }
+            });
         } else return false;
       });
     },
     updateCaptcha: function () {
-      fetch("")
-        .then((res) => res.json())
-        .then((data) => {
-          this.login.captchaCode = data.captchaCode;
-          this.login.captchaImage = data.captchaImage;
-        })
-        .catch((err) => console.error(err));
+      axios.get("/captcha").then((res) => {
+        const data = res.data;
+        this.loginForm.captchaImage = `data:image/jpg;base64,${data}`;
+      });
     },
   },
 };
