@@ -44,8 +44,13 @@ export default {
       });
     },
     newArticle: function () {
-      if (localStorage.getItem(util.commonToken) === null) this.$router.push('/login');
-      else this.$router.push('/editor');
+      if (localStorage.getItem(util.commonToken) === null) {
+        this.$message({
+          message: "您还未登录，请先登录！",
+          type: "error"
+        });
+        this.$router.push('/login');
+      } else this.$router.push('/editor');
     },
   },
 };

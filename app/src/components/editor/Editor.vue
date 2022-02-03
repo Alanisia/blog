@@ -56,7 +56,7 @@ export default {
       editorForm: {
         title: "",
         category: 0,
-        content,
+        content: "",
       },
     };
   },

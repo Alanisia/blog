@@ -39,8 +39,11 @@
       <el-form-item label="验证码" prop="captchaCode">
         <el-input v-model="registerForm.captchaCode" placeholder="请输入验证码">
           <el-image
+            style="width: 56px;"
             slot="append"
-            :src="registerForm.captchaImage"
+            fit="fill"
+            alt="captcha"
+            :src="sourceImage"
             @click="updateCaptcha"
           />
         </el-input>
@@ -61,13 +64,14 @@ export default {
   name: "Register",
   data() {
     return {
+      captchaImage: "",
+      sourceImage: "",
       registerForm: {
         email: "",
         username: "",
         password: "",
         checkPwd: "",
         captchaCode: "",
-        captchaImage: "",
       },
       rules: {
         email: [
@@ -124,6 +128,9 @@ export default {
       },
     };
   },
+  created() {
+    this.updateCaptcha();
+  },
   methods: {
     register: function () {
       this.$refs.registerForm.validate((valid) => {
@@ -134,8 +141,8 @@ export default {
               'email': this.registerForm.email,
               'username': this.registerForm.username,
               'password': md5(this.registerForm.password),
-              'captchaCode': this.registerForm.captchaCode,
-              'captchaImage': this.registerForm.captchaImage
+              'captcha_code': this.registerForm.captchaCode,
+              'captcha_image': this.captchaImage
             })
             .then((res) => {
               const data = res.data;
@@ -158,7 +165,8 @@ export default {
       .get('/captcha')
       .then(res => {
         const data = res.data;
-        this.registerForm.captchaImage = `data:image/jpg;base64,${data}`;
+        this.captchaImage = data.data;
+        this.sourceImage = `data:image/jpg;base64,${data.data}`;
       });
     },
   },

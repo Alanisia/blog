@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import util from "@/util";
+import util from "../../util";
 import axios from "axios";
 import md5 from "blueimp-md5";
 
@@ -48,7 +48,7 @@ export default {
       loginForm: {
         account: "",
         password: "",
-        captchaText: "",
+        captchaCode: "",
         captchaImage: "",
       },
       rules: {
@@ -86,6 +86,9 @@ export default {
       },
     };
   },
+  created() {
+    this.updateCaptcha();
+  },
   methods: {
     login: function () {
       this.$refs.loginForm.validate((valid) => {
@@ -94,7 +97,7 @@ export default {
             .post("/login", {
               email: this.loginForm.account,
               password: md5(this.loginForm.password),
-              captchaCode: this.loginForm.captchaText,
+              captchaCode: this.loginForm.captchaCode,
               captchaImage: this.loginForm.captchaImage,
             })
             .then((res) => {
@@ -103,10 +106,27 @@ export default {
                 this.$router.push("/");
                 return true;
               } else {
-                this.$message({
-                  message: data.message,
-                  type: 'error',
-                });
+                if (data.code === util.result.ACCOUNT_NOT_FOUND) {
+                  this.$message({
+                    message: "账户不存在！",
+                    type: "error",
+                  });
+                } else if (data.code === util.result.PASSWORD_INCORRECT) {
+                  this.$message({
+                    message: "密码错误！",
+                    type: "error",
+                  });
+                } else if (data.code === util.result.CAPTCHA_ERROR) {
+                  this.$message({
+                    message: "验证码错误！",
+                    type: "error",
+                  });
+                } else {
+                  this.$message({
+                    message: `未知错误，错误码：${data.code}`,
+                    type: "error",
+                  });
+                }
                 return false;
               }
             });

@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: "SystemInfo",
   data() {
@@ -22,6 +23,9 @@ export default {
       total: 0,
     };
   },
+  created() {
+    axios.get('/system/info');
+  }
 };
 </script>
 

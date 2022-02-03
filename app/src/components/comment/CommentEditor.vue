@@ -1,14 +1,14 @@
 <template>
-  <div>
-
-  </div>
+  <div></div>
 </template>
 
 <script>
 export default {
-  name: '404',
+    name: "CommentEditor",
+    
 }
 </script>
 
-<style scoped>
+<style>
+
 </style>

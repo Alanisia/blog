@@ -4,9 +4,11 @@ import alanisia.blog.common.enums.Result;
 import alanisia.blog.common.enums.Role;
 import alanisia.blog.common.util.CaptchaUtil;
 import alanisia.blog.common.util.CryptoUtil;
+import alanisia.blog.common.util.JsonUtil;
 import alanisia.blog.common.util.JwtUtil;
 import alanisia.blog.dao.AccountDao;
 import alanisia.blog.model.Account;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,7 +27,11 @@ public class AccountService {
     if (captcha.equals(redisTemplate.opsForValue().get(image))) {
       Account account = accountDao.getByEmail(email);
       if (account == null) return Result.ACCOUNT_NOT_FOUND;
-        log.debug("User {} not found", email);
+      try {
+        log.debug("account = {}", JsonUtil.json(account));
+      } catch (JsonProcessingException e) {
+        log.debug("WARN: {}", e.getMessage());
+      }
       String encodedPassword = CryptoUtil.sha256(password);
       if (!password.equals(encodedPassword)) return Result.PASSWORD_INCORRECT;
       else {
@@ -41,6 +47,11 @@ public class AccountService {
       if (accountDao.getByEmail(email) != null) return Result.ACCOUNT_EXISTED;
       Account account = new Account().setEmail(email).setUsername(username)
         .setRoleId(Role.MEMBER.getId()).setPassword(CryptoUtil.sha256(password));
+      try {
+        log.debug("account = {}", JsonUtil.json(account));
+      } catch (JsonProcessingException e) {
+        log.debug("WARN: {}", e.getMessage());
+      }
       accountDao.insert(account);
       return Result.OK;
     }
@@ -52,7 +63,7 @@ public class AccountService {
   }
 
   public CaptchaUtil.Captcha captcha() {
-    CaptchaUtil.Captcha c = CaptchaUtil.generate(300, 180);
+    CaptchaUtil.Captcha c = CaptchaUtil.generate(200, 120);
     redisTemplate.opsForValue().set(c.getBase64(), c.getCode(), 60, TimeUnit.SECONDS);
     return c;
   }
@@ -61,7 +72,9 @@ public class AccountService {
     if (token == null) return false;
     String subject = JwtUtil.subject(token);
     String value = redisTemplate.opsForValue().get(subject);
-    return token.equals(value);
+    boolean equal = token.equals(value);
+    log.debug("value == token? {}, subject = {}", equal, subject);
+    return equal;
   }
 
   public void signToken(Account account) {

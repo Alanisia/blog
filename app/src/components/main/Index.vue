@@ -1,24 +1,26 @@
 <template>
   <div>
-  <Tags/>
-  <Search />
+    <tags />
+    <search />
+    <h1>最新文章</h1>
+    <blog-list />
   </div>
 </template>
 
 <script>
-import Tags from '@/components/common/Tags';
-import Search from '@/components/common/Search';
+import Tags from "../common/Tags";
+import Search from "../common/Search";
+import BlogList from "../common/BlogList";
 
 export default {
-    name: 'Index',
-    components: {Tags, Search},
-    data() {
+  name: "Index",
+  components: { Tags, Search, BlogList },
+  data() {
     return {};
-    },
-    methods: {}
-}
+  },
+  methods: {},
+};
 </script>
 
 <style scoped>
-
 </style>

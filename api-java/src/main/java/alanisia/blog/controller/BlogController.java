@@ -2,12 +2,12 @@ package alanisia.blog.controller;
 
 import alanisia.blog.common.result.R;
 import alanisia.blog.service.BlogService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
+@CrossOrigin
 @RestController
 @RequestMapping("/blog")
 public class BlogController {
@@ -25,6 +25,7 @@ public class BlogController {
 
   @GetMapping("/newest")
   public R newest() {
+    log.info("blog: newest");
     return R.ok();
   }
 
