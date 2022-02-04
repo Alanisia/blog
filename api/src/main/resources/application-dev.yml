@@ -1,0 +1,19 @@
+server:
+  port: 9305
+
+spring:
+  profile:
+    active: dev
+  datasource:
+    username: root
+    password:
+    url: jdbc:mysql://localhost:3306/blog?useUnicode=true&characterEncoding=utf8
+    driverClassName: com.mysql.cj.jdbc.Driver
+  redis:
+    lettuce:
+      host: 127.0.0.1
+      port: 6379
+
+# logging:
+#   level:
+#     root: debug
