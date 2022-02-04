@@ -24,8 +24,9 @@
         <el-input v-model="loginForm.captchaCode" placeholder="请输入验证码">
           <el-image
             slot="append"
+            style="width: 56px"
             @click="updateCaptcha"
-            :src="loginForm.captchaImage"
+            :src="sourceImage"
           ></el-image>
         </el-input>
       </el-form-item>
@@ -45,11 +46,12 @@ export default {
   name: "Login",
   data() {
     return {
+      sourceImage: "",
+      captchaImage: "",
       loginForm: {
-        account: "",
+        email: "",
         password: "",
         captchaCode: "",
-        captchaImage: "",
       },
       rules: {
         email: [
@@ -93,16 +95,22 @@ export default {
     login: function () {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
+          console.log(this.loginForm);
           axios
             .post("/login", {
-              email: this.loginForm.account,
+              email: this.loginForm.email,
               password: md5(this.loginForm.password),
               captchaCode: this.loginForm.captchaCode,
-              captchaImage: this.loginForm.captchaImage,
+              captchaImage: this.captchaImage,
             })
             .then((res) => {
               const data = res.data;
               if (!data.code) {
+                this.$message({
+                  message: "登录成功！",
+                  type: "success",
+                });
+                localStorage.setItem(util.commonToken, data.data);
                 this.$router.push("/");
                 return true;
               } else {
@@ -134,10 +142,13 @@ export default {
       });
     },
     updateCaptcha: function () {
-      axios.get("/captcha").then((res) => {
-        const data = res.data;
-        this.loginForm.captchaImage = `data:image/jpg;base64,${data}`;
-      });
+      axios
+        .post("/captcha", { captchaImage: this.captchaImage })
+        .then((res) => {
+          const data = res.data;
+          this.captchaImage = data.data;
+          this.sourceImage = `data:image/jpg;base64,${data.data}`;
+        });
     },
   },
 };

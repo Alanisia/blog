@@ -1,11 +1,11 @@
 <template>
   <el-container>
     <el-header>
-      <Navbar hasLogin=""></Navbar>
+      <navbar />
     </el-header>
-     <el-main>
-        <router-view></router-view>
-     </el-main>
+    <el-main>
+      <router-view></router-view>
+    </el-main>
   </el-container>
 </template>
 

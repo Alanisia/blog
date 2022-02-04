@@ -22,12 +22,12 @@
         </el-select>
       </el-form-item>
       <el-form-item label="标签">
-        <el-button icon="el-icon-circle-plus" @click="addTags" type="warning"
-          >添加标签</el-button
-        >
+        <el-button icon="el-icon-circle-plus" @click="addTags" type="warning">
+          添加标签
+        </el-button>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="editorForm.content"></el-input>
+        <el-input v-model="editorForm.content" autosize></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="display">演示</el-button>
@@ -59,6 +59,9 @@ export default {
         content: "",
       },
     };
+  },
+  created() {
+    this.getCategories();
   },
   methods: {
     reset: function () {
@@ -131,6 +134,12 @@ export default {
     addTags: function () {
       this.$refs.tagsAddDialog.tagsAddVisible = true;
     },
+    getCategories: function () {
+      axios.get('/categories').then(res => {
+        const data = res.data.data;
+        this.categories = data;
+      });
+    }
   },
 };
 </script>

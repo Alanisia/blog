@@ -44,7 +44,8 @@ export default {
       });
     },
     newArticle: function () {
-      if (localStorage.getItem(util.commonToken) === null) {
+      const token = localStorage.getItem(util.commonToken);
+      if (token === null || token === "") {
         this.$message({
           message: "您还未登录，请先登录！",
           type: "error"

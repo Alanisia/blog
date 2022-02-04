@@ -39,10 +39,8 @@
       <el-form-item label="验证码" prop="captchaCode">
         <el-input v-model="registerForm.captchaCode" placeholder="请输入验证码">
           <el-image
-            style="width: 56px;"
+            style="width: 56px"
             slot="append"
-            fit="fill"
-            alt="captcha"
             :src="sourceImage"
             @click="updateCaptcha"
           />
@@ -57,7 +55,7 @@
 
 <script>
 import axios from "axios";
-import md5 from 'blueimp-md5';
+import md5 from "blueimp-md5";
 import util from "@/util";
 
 export default {
@@ -138,21 +136,25 @@ export default {
         else {
           axios
             .post("/register", {
-              'email': this.registerForm.email,
-              'username': this.registerForm.username,
-              'password': md5(this.registerForm.password),
-              'captcha_code': this.registerForm.captchaCode,
-              'captcha_image': this.captchaImage
+              email: this.registerForm.email,
+              username: this.registerForm.username,
+              password: md5(this.registerForm.password),
+              captchaCode: this.registerForm.captchaCode,
+              captchaImage: this.captchaImage,
             })
             .then((res) => {
               const data = res.data;
               if (!data.code) {
+                this.$message({
+                  message: "注册成功",
+                  type: "success"
+                });
                 this.$router.push("/login");
                 return true;
               } else {
                 this.$message({
                   message: data.message,
-                  type: 'error',
+                  type: "error"
                 });
                 return false;
               }
@@ -162,12 +164,12 @@ export default {
     },
     updateCaptcha: function () {
       axios
-      .get('/captcha')
-      .then(res => {
-        const data = res.data;
-        this.captchaImage = data.data;
-        this.sourceImage = `data:image/jpg;base64,${data.data}`;
-      });
+        .post("/captcha", { captchaImage: this.captchaImage })
+        .then((res) => {
+          const data = res.data;
+          this.captchaImage = data.data;
+          this.sourceImage = `data:image/jpg;base64,${data.data}`;
+        });
     },
   },
 };

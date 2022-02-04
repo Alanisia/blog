@@ -11,7 +11,7 @@ Vue.use(ElementUI);
 Vue.config.productionTip = false;
 
 axios.defaults.baseURL = 'http://127.0.0.1:9305';
-//axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.headers.common['Authorization'] = localStorage.getItem(util.commonToken);
 axios.defaults.timeout = 5000;
 
