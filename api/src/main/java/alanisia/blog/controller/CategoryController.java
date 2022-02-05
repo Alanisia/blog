@@ -17,13 +17,13 @@ public class CategoryController {
 
   @GetMapping("/categories")
   public R categories() {
-    log.info("categories");
+//    log.info("categories");
     return R.ok().setData(categoryService.categories());
   }
 
   @GetMapping("/tags")
   public R tags() {
-    log.info("tags");
+//    log.info("tags");
     return R.ok().setData(categoryService.tags());
   }
 }

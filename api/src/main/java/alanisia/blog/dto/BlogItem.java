@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 @Accessors(chain = true)
-public class BlogDto implements Serializable {
+public class BlogItem implements Serializable {
   private long id;
   private String title;
   private String author;

@@ -15,11 +15,17 @@ public interface CategoryDao {
   @Select("select * from category")
   List<Category> categories();
 
+  @Select("select * from category where id = #{id}")
+  Category category(int id);
+
   @Insert("insert into category(`name`, `route`) values(#{category.name}, #{category.route})")
   void insertCategory(@Param("category") Category category);
 
   @Select("select * from tag")
   List<Tag> tags();
+
+  @Select("select * from tag where id = #{id}")
+  Tag tag(int id);
 
   @Insert("insert into tag(`name`) values(#{tag.name})")
   void insertTag(@Param("tag") Tag tag);

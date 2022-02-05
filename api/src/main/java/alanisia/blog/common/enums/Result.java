@@ -8,8 +8,9 @@ import lombok.Getter;
 public enum Result {
   OK(0, "OK"),
 
-  ACCOUNT_NOT_FOUND(1, "Account not found"),
-  ACCOUNT_EXISTED(2, "Account existed"),
+  UNKNOWN_ERROR(1, "Unknown error"),
+  ACCOUNT_NOT_FOUND(2, "Account not found"),
+  ACCOUNT_EXISTED(3, "Account existed"),
   PASSWORD_INCORRECT(4, "Password incorrect"),
   AUTHORIZE_FAILED(8, "Authorize failed"),
   CAPTCHA_ERROR(10, "Captcha error"),

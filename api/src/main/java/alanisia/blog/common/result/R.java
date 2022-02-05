@@ -21,4 +21,8 @@ public class R {
   public static R ok() {
     return new R(Result.OK);
   }
+
+  public static R error(Result result) {
+    return new R(result);
+  }
 }

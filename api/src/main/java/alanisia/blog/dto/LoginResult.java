@@ -6,6 +6,7 @@ import alanisia.blog.common.enums.Result;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+@Deprecated
 @Data
 @Accessors(chain = true)
 public class LoginResult {

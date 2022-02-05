@@ -25,8 +25,8 @@ public class BlogController {
 
   @GetMapping("/newest")
   public R newest() {
-    log.info("blog: newest");
-    return R.ok();
+    // log.info("blog: newest");
+    return R.ok().setData(blogService.ListOfNewest());
   }
 
   @GetMapping("/search")
@@ -42,5 +42,10 @@ public class BlogController {
   @GetMapping("/tag")
   public R showByTag(int tagId) {
     return R.ok();
+  }
+
+  @GetMapping("/blog/{id}")
+  public R details(@PathVariable("id") long id) {
+    return R.ok().setData(blogService.detail(id));
   }
 }

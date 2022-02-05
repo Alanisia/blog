@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 @Accessors(chain = true)
-public class CommentDto implements Serializable {
+public class CommentDTO implements Serializable {
   private long id;
   private long accountId;
   private long blogId;

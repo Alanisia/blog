@@ -1,5 +1,7 @@
 package alanisia.blog.interceptor;
 
+import alanisia.blog.common.enums.Result;
+import alanisia.blog.exception.BusinessException;
 import alanisia.blog.service.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,10 @@ public class RequestInterceptor implements HandlerInterceptor {
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
     String value = (String) request.getAttribute("Authorization");
     log.debug("Authorization = {}", value);
-    return accountService.tokenAuthorize(value);
+    if (!accountService.tokenAuthorize(value)) {
+      log.debug("Auth failed");
+      throw new BusinessException(Result.AUTHORIZE_FAILED);
+    }
+    return true;
   }
 }
