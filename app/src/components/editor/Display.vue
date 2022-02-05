@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import marked from 'marked';
+
 export default {
   name: "Display",
   data() {
@@ -14,8 +16,13 @@ export default {
       displayVisible: false
     };
   },
+  mounted() {
+    this.mdRender();
+  },
   methods: {
-    mdRender: function () {},
+    mdRender: function () {
+      this.mdHtml = marked(this.mdText);
+    },
   },
 };
 </script>

@@ -8,10 +8,12 @@ export default {
     return pwdReg.test(password)
   },
   commonToken: 'blog-auth-token',
+  currentUser: '',
   result: {
     "OK": 0,
-    "ACCOUNT_NOT_FOUND": 1,
-    "ACCOUNT_EXISTED": 2,
+    "UNKNOWN_ERROR": 1,
+    "ACCOUNT_NOT_FOUND": 2,
+    "ACCOUNT_EXISTED": 3,
     "PASSWORD_INCORRECT": 4,
     "AUTHORIZE_FAILED": 8,
     "CAPTCHA_ERROR": 10,

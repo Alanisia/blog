@@ -104,13 +104,14 @@ export default {
               captchaImage: this.captchaImage,
             })
             .then((res) => {
-              const data = res.data;
+              const data = res.data.data;
               if (!data.code) {
                 this.$message({
                   message: "登录成功！",
                   type: "success",
                 });
-                localStorage.setItem(util.commonToken, data.data);
+                localStorage.setItem(util.commonToken, data.token);
+                localStorage.setItem(util.currentUser, data.accountId);
                 this.$router.push("/");
                 return true;
               } else {

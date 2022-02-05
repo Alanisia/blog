@@ -6,7 +6,10 @@ import Index from '@/components/main/Index';
 import Editor from '@/components/editor/Editor';
 import Center from '@/components/center/Center';
 import Info from '@/components/center/items/Info';
-import Blog from '@/components/center/items/Blog';
+import History from '@/components/center/blog/History';
+import Star from '@/components/center/blog/Star';
+import Mine from '@/components/center/blog/Mine';
+import Draft from '@/components/center/blog/Draft';
 import Message from '@/components/center/items/Message';
 import Login from '@/components/account/Login';
 import Register from '@/components/account/Register';
@@ -19,7 +22,10 @@ const routes = [
     {path: '/center', component: Center, children: [
       {path: '/info', component: Info},
       {path: '/message', component: Message},
-      {path: '/blog', component: Blog}
+      {path: '/history', component: History},
+      {path: '/star', component: Star},
+      {path: '/mine', component: Mine},
+      {path: '/draft', component: Draft},
     ]},
     {path: '/editor', component: Editor},
     {path: '/', component: Index},

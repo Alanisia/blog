@@ -4,7 +4,6 @@
       <strong>{{ blog.title }}</strong>
     </legend>
     <el-descriptions>
-      <el-descriptions-item></el-descriptions-item>
       <el-descriptions-item icon="el-icon-star-off">{{
         blog.stars
       }}</el-descriptions-item>
@@ -14,7 +13,7 @@
       }}</el-descriptions-item>
       <el-descriptions-item label="更新时间"></el-descriptions-item>
     </el-descriptions>
-    <div>{{ blog.content }}</div>
+    <div v-html="blog.content"></div>
     <h3>评论区（登录后方可参与评论）</h3>
   </el-main>
 </template>
@@ -37,7 +36,8 @@ export default {
     };
   },
   created() {
-
+    this.loadBlog();
+    this.loadComment();
   },
   methods: {
     loadBlog: function() {},
