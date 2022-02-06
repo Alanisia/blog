@@ -4,10 +4,7 @@ import alanisia.blog.model.Blog;
 import alanisia.blog.model.BlogHistory;
 import alanisia.blog.model.StarBlog;
 import alanisia.blog.model.UserDetail;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -16,6 +13,10 @@ public interface UserDao {
   @Insert("insert into user_detail(account_id, gender, avatar) " +
     "values(#{detail.accountId}), #{detail.gender}, #{detail.avatar})")
   void insert(@Param("detail") UserDetail detail);
+
+  @Update("update user_detail set gender = #{detail.gender}, avatar = #{detail.avatar}" +
+    " where account_id = #{detail.accountId}")
+  void update(@Param("detail") UserDetail detail);
 
   @Select("select * from user_detail where id = #{id}")
   UserDetail detail(@Param("id") long id);

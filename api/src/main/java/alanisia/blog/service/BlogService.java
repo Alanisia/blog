@@ -65,7 +65,7 @@ public class BlogService {
     return items;
   }
 
-  @Cacheable(value = "detail", key = "blog_#id")
+  @Cacheable(value = "blog_detail", key = "#id")
   public BlogDetail detail(long id) {
     Blog blog = blogDao.select(id);
     List<TagBlog> tagBlogs = blogDao.getBlogsByTag(id);

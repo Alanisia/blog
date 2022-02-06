@@ -28,30 +28,25 @@ public class AccountService {
   public static final String TOKENS = "tokens";
 
   public Token login(Login login) {
-    // LoginResult result = new LoginResult();
     if (login.getCaptchaCode().equals(redisTemplate.opsForValue().get(login.getCaptchaImage()))) {
       Account account = accountDao.getByEmail(login.getEmail());
-      if (account == null) // return result.setResult(Result.ACCOUNT_NOT_FOUND);
+      if (account == null)
         throw new BusinessException(Result.ACCOUNT_NOT_FOUND);
       log.debug("account = {}", JsonUtil.json(account));
       String encodedPassword = CryptoUtil.sha256(login.getPassword());
       if (!account.getPassword().equals(encodedPassword))
-        // return result.setResult(Result.PASSWORD_INCORRECT);
         throw new BusinessException(Result.PASSWORD_INCORRECT);
       else {
         String token = signToken(account);
-        // return result.setResult(Result.OK).setDto(
-        //  new LoginResult.LoginDto().setToken(token).setAccountId(account.getId()));
         return new Token().setAccountId(account.getId()).setToken(token);
       }
     }
-    // return result.setResult(Result.CAPTCHA_ERROR);
     throw new BusinessException(Result.CAPTCHA_ERROR);
   }
 
   public Result register(Register register) {
     if (checkCaptcha(register.getCaptchaCode(), register.getCaptchaImage())) {
-      if (accountDao.getByEmail(register.getEmail()) != null) // return Result.ACCOUNT_EXISTED;
+      if (accountDao.getByEmail(register.getEmail()) != null)
         throw new BusinessException(Result.ACCOUNT_EXISTED);
       Account account = new Account()
         .setEmail(register.getEmail())
@@ -62,7 +57,6 @@ public class AccountService {
       accountDao.insert(account);
       return Result.OK;
     }
-    // return Result.CAPTCHA_ERROR;
     throw new BusinessException(Result.CAPTCHA_ERROR);
   }
 
@@ -72,7 +66,6 @@ public class AccountService {
 
   public CaptchaUtil.Captcha captcha(String oldImage) {
     if (StringUtils.hasLength(oldImage)) redisTemplate.delete(oldImage);
-    // if (oldImage != null && oldImage.length() > 0) redisTemplate.delete(oldImage);
     CaptchaUtil.Captcha c = CaptchaUtil.generate(200, 120);
     redisTemplate.opsForValue().set(c.getBase64(), c.getCode(), 30, TimeUnit.MINUTES);
     return c;

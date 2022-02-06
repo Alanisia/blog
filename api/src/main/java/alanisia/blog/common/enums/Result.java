@@ -14,6 +14,7 @@ public enum Result {
   PASSWORD_INCORRECT(4, "Password incorrect"),
   AUTHORIZE_FAILED(8, "Authorize failed"),
   CAPTCHA_ERROR(10, "Captcha error"),
+  NULL_EXCEPTION(14, "Null exception"),
   TOKEN_EXPIRED(15, "Token expired"),
   NO_PERMISSION(16, "No permission");
 

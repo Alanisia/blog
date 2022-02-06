@@ -25,7 +25,6 @@ public class BlogController {
 
   @GetMapping("/newest")
   public R newest() {
-    // log.info("blog: newest");
     return R.ok().setData(blogService.ListOfNewest());
   }
 
