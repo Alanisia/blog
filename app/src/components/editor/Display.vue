@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import marked from 'marked';
+import { marked } from "marked";
 
 export default {
   name: "Display",
@@ -13,16 +13,13 @@ export default {
     return {
       mdText: "",
       mdHtml: "",
-      displayVisible: false
+      displayVisible: false,
     };
   },
-  mounted() {
-    this.mdRender();
-  },
-  methods: {
-    mdRender: function () {
+  watch: {
+    mdText: function() {
       this.mdHtml = marked(this.mdText);
-    },
+    }
   },
 };
 </script>

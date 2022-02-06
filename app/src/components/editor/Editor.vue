@@ -103,6 +103,7 @@ export default {
   },
   methods: {
     display: function () {
+      this.$refs.displayDialog.mdText = this.editorForm.content;
       this.$refs.displayDialog.displayVisible = true;
     },
     publish: function () {
@@ -180,5 +181,5 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 </style>
