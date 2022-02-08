@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     loadInfo: function () {
-      const id = localStorage.getItem(util.currentUser);
+      const id = util.getCurrentUser();
       axios.get(`/info/${id}`).then((res) => {
         const data = res.data.data;
         this.account.id = data.id;

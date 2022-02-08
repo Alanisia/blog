@@ -4,6 +4,7 @@
       <strong>{{ blog.title }}</strong>
     </legend>
     <el-descriptions>
+      <el-descriptions-item label="分类">{{ blog.category }}</el-descriptions-item>
       <el-descriptions-item icon="el-icon-star-off">{{
         blog.stars
       }}</el-descriptions-item>
@@ -27,7 +28,7 @@ export default {
         id: 0,
         title: "",
         updateTime: "",
-        tags: [],
+        category: "",
         content: "",
         comments: 0,
         likes: 0,

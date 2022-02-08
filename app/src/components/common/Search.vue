@@ -38,13 +38,13 @@ export default {
       axios.post('/search', {
         'keyword': this.searchForm.keyword
       }).then(res => {
-        const data = res.data;
+        const data = res.data.data;
         // TODO
         console.debug(data);
       });
     },
     newArticle: function () {
-      const token = localStorage.getItem(util.commonToken);
+      const token = util.getToken(); 
       if (token === null || token === "") {
         this.$message({
           message: "您还未登录，请先登录！",

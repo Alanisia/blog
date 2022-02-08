@@ -3,11 +3,12 @@
     <span></span>
 
     <el-menu-item index="/">首页</el-menu-item>
-    <template v-for="item in categories">
+    <!-- <template v-for="item in categories">
       <el-menu-item :index="item.route" :key="item.route">{{
         item.name
       }}</el-menu-item>
-    </template>
+    </template> -->
+    <el-menu-item index="/categories">分类</el-menu-item>
     <template v-if="hasLogin">
       <el-menu-item index="login" style="float: right" @click="logout">退出登录</el-menu-item>
       <el-menu-item index="center" style="float: right">个人中心</el-menu-item>
@@ -20,28 +21,29 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 import util from '../../util';
 export default {
   name: "Navbar",
   data() {
     return {
       categories: [],
-      hasLogin: localStorage.getItem(util.commonToken) !== ""
+      hasLogin: util.getToken() !== "" 
     };
   },
   created() {
-    this.getCategories();
+    // this.getCategories();
   },
   methods: {
-    getCategories: function () {
-      axios.get('/categories').then(res => {
-        const data = res.data.data;
-        this.categories = data;
-      });
-    },
+    // getCategories: function () {
+    //   axios.get('/categories').then(res => {
+    //     const data = res.data.data;
+    //     this.categories = data;
+    //   });
+    // },
     logout: function() {
-      localStorage.setItem(util.commonToken, '');
+       // localStorage.setItem(util.commonToken, '');
+       util.setToken('');
     }
   },
 };

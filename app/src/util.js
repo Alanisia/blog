@@ -7,8 +7,14 @@ export default {
     let pwdReg = new RegExp(/^[a-zA-Z0-9]\w{5,17}$/)
     return pwdReg.test(password)
   },
-  commonToken: 'blog-auth-token',
-  currentUser: 'blog-current-user',
+  setToken: token => localStorage.setItem('blog-auth-token', token),
+  getToken: () => {
+    return localStorage.getItem('blog-auth-token');
+  },
+  setCurrentUser: id => localStorage.setItem('blog-auth-token', id),
+  getCurrentUser: () => {
+    return parseInt(localStorage.getItem('blog-current-user'));
+  },
   result: {
     "OK": 0,
     "UNKNOWN_ERROR": 1,

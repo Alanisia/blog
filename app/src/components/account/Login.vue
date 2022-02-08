@@ -110,8 +110,8 @@ export default {
                   message: "登录成功！",
                   type: "success",
                 });
-                localStorage.setItem(util.commonToken, data.token);
-                localStorage.setItem(util.currentUser, data.accountId);
+                util.setToken(data.token);
+                util.setCurrentUser(data.accountId);
                 this.$router.push("/");
                 return true;
               } else {

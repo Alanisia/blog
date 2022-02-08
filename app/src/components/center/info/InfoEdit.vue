@@ -54,7 +54,7 @@ export default {
   },
   methods: {
     modify: function () {
-      const id = localStorage.getItem(util.currentUser);
+      const id = util.getCurrentUser();
       axios
         .post(`/info/modify/${id}`, {
           id: id,

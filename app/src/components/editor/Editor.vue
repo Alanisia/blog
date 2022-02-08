@@ -16,16 +16,17 @@
             v-for="category in categories"
             :key="category.id"
             :label="category.name"
-            :value="category.id"
+            :value="category"
           >
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="标签">
+      <!-- <el-form-item label="标签">
+        <el-tag class="blog-tag" v-for="tag in editorForm.tags" :key="tag.id">{{ tag.name }}</el-tag>
         <el-button icon="el-icon-circle-plus" @click="addTags" type="warning">
           添加标签
         </el-button>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <codemirror
           :options="cmOptions"
@@ -39,13 +40,13 @@
       </el-form-item>
     </el-form>
     <Display :displayVisible="false" ref="displayDialog" />
-    <TagsAdding :tagsAddVisible="false" ref="tagsAddDialog" />
+    <!-- <TagsAdding :tagsAddVisible="false" ref="tagsAddDialog" /> -->
   </el-main>
 </template>
 
 <script>
 import Display from "@/components/editor/Display";
-import TagsAdding from "@/components/editor/TagsAdding";
+// import TagsAdding from "@/components/editor/TagsAdding";
 import axios from "axios";
 import {codemirror} from "vue-codemirror";
 import util from "../../util";
@@ -67,14 +68,16 @@ import "codemirror/mode/markdown/markdown";
 
 export default {
   name: "Editor",
-  components: { Display, TagsAdding, codemirror },
+  components: { Display, codemirror }, // TagsAdding
   data() {
     return {
       categories: [],
+      accountId: localStorage.getItem(parseInt(util.currentUser)),
       editorForm: {
         title: "",
-        category: 0,
         content: "",
+        category: 0,
+        // tags: this.$store.state.tagsChosen
       },
       cmOptions: {
         mode: "markdown",
@@ -114,11 +117,15 @@ export default {
         });
         this.$router.push("/login");
       } else {
+        // this.editorForm.tags = this.$refs.TagsAddDialog.tagsChosen;
         axios
           .post("/blog/publish", {
-            title: this.editorForm.title,
+            accountId: this.accountId,
             category: this.editorForm.category,
+            // tags: this.editorForm.tags,
+            title: this.editorForm.title,
             content: this.editorForm.content,
+            draft: 0
           })
           .then((res) => {
             const data = res.data;
@@ -133,6 +140,7 @@ export default {
                 message: "发表成功",
                 type: "success",
               });
+              // this.$store.commit('tagClean');
               this.$router.push("/");
             }
           });
@@ -148,9 +156,12 @@ export default {
       } else {
         axios
           .post("/blog/save", {
-            title: this.editorForm.title,
+            accountId: this.accountId,
             category: this.editorForm.category,
+            // tags: this.editorForm.tags,
+            title: this.editorForm.title,
             content: this.editorForm.content,
+            draft: 1
           })
           .then((res) => {
             const data = res.data;
@@ -164,13 +175,15 @@ export default {
                 message: "成功保存至草稿箱，可前往个人中心查看",
                 type: "success",
               });
+              // this.$store.commit('tagClean');
+              this.$router.push('/');
             }
           });
       }
     },
-    addTags: function () {
-      this.$refs.tagsAddDialog.tagsAddVisible = true;
-    },
+    // addTags: function () {
+    //   this.$refs.tagsAddDialog.tagsAddVisible = true;
+    // },
     getCategories: function () {
       axios.get("/categories").then((res) => {
         const data = res.data.data;
@@ -182,4 +195,7 @@ export default {
 </script>
 
 <style>
+.CodeMirror-sizer {
+  line-height: 22px;
+}
 </style>
