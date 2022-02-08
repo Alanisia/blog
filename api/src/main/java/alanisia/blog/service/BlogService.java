@@ -9,6 +9,7 @@ import alanisia.blog.dto.BlogItem;
 import alanisia.blog.model.Account;
 import alanisia.blog.model.Blog;
 import alanisia.blog.vo.BlogVO;
+import alanisia.blog.vo.StarVO;
 import alanisia.blog.vo.UpdateBlogVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,15 +53,25 @@ public class BlogService {
     blogDao.delete(id);
   }
 
+  public void starBlog(StarVO starVO) {
+    log.debug("star = {}", JsonUtil.json(starVO));
+    blogDao.star(starVO.getAccountId(), starVO.getBlogId());
+  }
+
+  public void cancelStar(StarVO starVO) {
+    log.debug("star = {}", JsonUtil.json(starVO));
+    blogDao.cancelStar(starVO.getAccountId(), starVO.getBlogId());
+  }
+
   @Cacheable(value = "newest")
   public List<BlogItem> ListOfNewest() {
     List<Blog> newestBlogs = blogDao.newest(50);
     List<BlogItem> items = new ArrayList<>();
     newestBlogs.forEach(blog -> {
-      BlogItem item = new BlogItem()
+      BlogItem item = new BlogItem().setId(blog.getId())
         .setAuthor(accountDao.select(blog.getAccountId()).getUsername())
-        .setTitle(blog.getTitle()).setStars(blog.getStar())
-        .setLikes(blog.getLike());
+        .setTitle(blog.getTitle()).setStar(blog.getStar()).setComment(0) // TODO: comment
+        .setLike(blog.getLike()).setUpdateAt(blog.getUpdateAt());
       items.add(item);
     });
     return items;

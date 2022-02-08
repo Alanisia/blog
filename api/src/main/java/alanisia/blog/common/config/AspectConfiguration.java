@@ -1,6 +1,8 @@
 package alanisia.blog.common.config;
 
 import alanisia.blog.common.util.JsonUtil;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,22 +22,31 @@ public class AspectConfiguration {
 
   @Before("pointcut()")
   public void beforeController(JoinPoint joinPoint) {
-    before(joinPoint);
+    Info info = before(joinPoint);
+    log.debug("{}.{}, args = {}", info.getClazz(), info.getMethod(), JsonUtil.json(info.getArgs()));
   }
 
   @Before("execution (* alanisia.blog.exception.ExceptionsHandler.*(..))")
   public void beforeException(JoinPoint joinPoint) {
-    before(joinPoint);
+    Info info = before(joinPoint);
+    log.debug("{}.{}, args = {}", info.getClazz(), info.getMethod(), info.getArgs());
   }
 
-  private void before(JoinPoint joinPoint) {
+  private Info before(JoinPoint joinPoint) {
     MethodSignature signature = (MethodSignature) joinPoint.getSignature();
     Method m = signature.getMethod();
     String method = m.getName();
     String clazz = m.getDeclaringClass().getSimpleName();
     Object[] args = joinPoint.getArgs();
-    log.debug("{}.{}, args = {}", clazz, method, JsonUtil.json(args));
+    return new Info().setClazz(clazz).setMethod(method).setArgs(args);
     // log.info("Class = {}, method = {}", clazz, method);
     // log.debug("Args = {}", JsonUtil.json(args));
+  }
+
+  @Data
+  @Accessors(chain = true)
+  static class Info {
+    private String clazz, method;
+    private Object[] args;
   }
 }

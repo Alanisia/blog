@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC
+  "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="alanisia.blog.dao.UserDao">
+  <resultMap id="BlogResultMap" type="alanisia.blog.model.Blog">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="account_id" jdbcType="BIGINT" property="accountId"/>
+    <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
+    <result column="title" jdbcType="VARCHAR" property="title"/>
+    <result column="content" jdbcType="LONGVARCHAR" property="content"/>
+    <result column="like" jdbcType="INTEGER" property="like"/>
+    <result column="star" jdbcType="INTEGER" property="star"/>
+    <result column="create_at" jdbcType="TIMESTAMP" property="createAt"/>
+    <result column="update_at" jdbcType="TIMESTAMP" property="updateAt"/>
+  </resultMap>
+  <select id="draft" parameterType="java.lang.Long" resultMap="BlogResultMap">
+    select * from blog where account_id = #{accountId,jdbcType=BIGINT} and draft = 1
+  </select>
+  <select id="publish" parameterType="java.lang.Long" resultMap="BlogResultMap">
+    select * from blog where account_id = #{accountId,jdbcType=BIGINT} and draft = 0
+  </select>
+</mapper>

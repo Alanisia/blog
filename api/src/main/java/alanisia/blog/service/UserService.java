@@ -3,6 +3,7 @@ package alanisia.blog.service;
 import alanisia.blog.common.enums.Result;
 import alanisia.blog.dao.AccountDao;
 import alanisia.blog.dao.BlogDao;
+import alanisia.blog.dao.CategoryDao;
 import alanisia.blog.dao.UserDao;
 import alanisia.blog.dto.BlogItem;
 import alanisia.blog.dto.UserDetailDTO;
@@ -24,6 +25,7 @@ import java.util.List;
 public class UserService {
   @Autowired private AccountDao accountDao;
   @Autowired private BlogDao blogDao;
+  @Autowired private CategoryDao categoryDao;
   @Autowired private UserDao userDao;
 
   @CachePut(value = "user_detail", key = "#id")
@@ -47,6 +49,10 @@ public class UserService {
     }
   }
 
+  public void removeHistory(long id, long blogId) {
+    userDao.removeHistory(id, blogId);
+  }
+
   @Cacheable(value = "user_detail", key = "#id")
   public UserDetailDTO detail(long id) {
     UserDetail detail = userDao.detail(id);
@@ -63,58 +69,96 @@ public class UserService {
     return detailDTO;
   }
 
-  private List<BlogItem> items(List<Object> t) {
+  @Cacheable(value = "user_history", key = "#id")
+  public List<BlogItem> history(long id) {
+    List<BlogHistory> histories = userDao.history(id);
     List<BlogItem> items = new ArrayList<>();
-    t.forEach(b -> {
-      long blogId = 0, accountId = 0;
-      if (b instanceof Blog) {
-        blogId = ((Blog) b).getId();
-        accountId = ((Blog) b).getAccountId();
-      } else if (b instanceof StarBlog) {
-        blogId = ((StarBlog) b).getBlogId();
-        accountId = ((StarBlog) b).getAccountId();
-      } else if (b instanceof BlogHistory) {
-        blogId = ((BlogHistory) b).getBlogId();
-        accountId = ((BlogHistory) b).getAccountId();
-      } else {
-        throw new BusinessException(Result.UNKNOWN_ERROR);
-      }
+    histories.forEach(b -> {
+      long blogId = b.getBlogId();
+      long accountId = b.getAccountId();
       Blog blog = blogDao.select(blogId);
+      Category category = categoryDao.category(blog.getCategoryId());
       Account account = accountDao.select(accountId);
       BlogItem item = new BlogItem()
         .setId(blog.getId())
         .setAuthor(account.getUsername())
+        .setCategory(category.getName())
         .setTitle(blog.getTitle())
-        .setLikes(blog.getLike())
-        .setStars(blog.getStar())
+        .setLike(blog.getLike())
+        .setStar(blog.getStar())
         .setUpdateAt(blog.getUpdateAt());
       items.add(item);
     });
     return items;
   }
 
-  @Cacheable(value = "user_history", key = "#id")
-  public List<BlogItem> history(long id) {
-    List<BlogHistory> histories = userDao.history(id);
-    return items(Collections.singletonList(histories));
-  }
-
   @Cacheable(value = "user_star", key = "#id")
   public List<BlogItem> star(long id) {
     List<StarBlog> starBlogs = userDao.star(id);
-    return items(Collections.singletonList(starBlogs));
+    List<BlogItem> items = new ArrayList<>();
+    starBlogs.forEach(b -> {
+      long blogId = b.getBlogId();
+      long accountId = b.getAccountId();
+      Blog blog = blogDao.select(blogId);
+      Category category = categoryDao.category(blog.getCategoryId());
+      Account account = accountDao.select(accountId);
+      BlogItem item = new BlogItem()
+        .setId(blog.getId())
+        .setAuthor(account.getUsername())
+        .setCategory(category.getName())
+        .setTitle(blog.getTitle())
+        .setLike(blog.getLike())
+        .setStar(blog.getStar())
+        .setUpdateAt(blog.getUpdateAt());
+      items.add(item);
+    });
+    return items;
   }
 
   @Cacheable(value = "user_publish", key = "#id")
   public List<BlogItem> publish(long id) {
     List<Blog> blogs = userDao.publish(id);
-    return items(Collections.singletonList(blogs));
+    List<BlogItem> items = new ArrayList<>();
+    blogs.forEach(b -> {
+      long blogId = b.getId();
+      long accountId = b.getAccountId();
+      Blog blog = blogDao.select(blogId);
+      Category category = categoryDao.category(blog.getCategoryId());
+      Account account = accountDao.select(accountId);
+      BlogItem item = new BlogItem()
+        .setId(blog.getId())
+        .setAuthor(account.getUsername())
+        .setCategory(category.getName())
+        .setTitle(blog.getTitle())
+        .setLike(blog.getLike())
+        .setStar(blog.getStar())
+        .setUpdateAt(blog.getUpdateAt());
+      items.add(item);
+    });
+    return items;
   }
 
   @Cacheable(value = "user_draft", key = "#id")
   public List<BlogItem> draft(long id) {
     List<Blog> blogs = userDao.draft(id);
-    return items(Collections.singletonList(blogs));
+    List<BlogItem> items = new ArrayList<>();
+    blogs.forEach(b -> {
+      long blogId = b.getId();
+      long accountId = b.getAccountId();
+      Blog blog = blogDao.select(blogId);
+      Category category = categoryDao.category(blog.getCategoryId());
+      Account account = accountDao.select(accountId);
+      BlogItem item = new BlogItem()
+        .setId(blog.getId())
+        .setAuthor(account.getUsername())
+        .setCategory(category.getName())
+        .setTitle(blog.getTitle())
+        .setLike(blog.getLike())
+        .setStar(blog.getStar())
+        .setUpdateAt(blog.getUpdateAt());
+      items.add(item);
+    });
+    return items;
   }
 
   @Cacheable(value = "user_draft_count", key = "#id")

@@ -1,3 +1,9 @@
-# blog
+# Blog
 
-Le repositorio de le códices fonte de le blog.
+Blog source code.
+
+Frontend is written in Vue while backend is in Spring Boot.
+
+### Build, Run & Deploy
+
+***TODO***

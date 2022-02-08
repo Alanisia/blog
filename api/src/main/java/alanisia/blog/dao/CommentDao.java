@@ -16,5 +16,5 @@ public interface CommentDao {
   @Update("update comment set like = like + 1 where id = #{id}")
   void like(@Param("id") long id);
 
-  // List<CommentDto>
+  // List<CommentDto> select();
 }

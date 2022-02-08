@@ -10,10 +10,11 @@ import java.util.Date;
 @Accessors(chain = true)
 public class BlogItem implements Serializable {
   private long id;
+  private String category;
   private String title;
   private String author;
-  private int likes;
-  private int stars;
-  private int comments;
+  private int like;
+  private int star;
+  private int comment;
   private Date updateAt;
 }

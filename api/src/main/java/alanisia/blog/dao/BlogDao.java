@@ -22,12 +22,21 @@ public interface BlogDao {
     " `like` = #{blog.like}, `star` = #{blog.star} where `id` = #{id}")
   void update(@Param("id") long id, @Param("blog") Blog blog);
 
-  @Select("select * from blog where `id` = #{id}")
-  Blog select(@Param("id") long id);
+  @Insert("insert into star_blog(`account_id`, `blog_id`) values(#{accountId}, #{blogId})")
+  void star(@Param("accountId") long accountId, @Param("blogId") long blogId);
 
-  @Select("select * from blog")
+  @Delete("delete from star_blog where account_id = #{accountId} and blog_id = #{blogId}")
+  void cancelStar(@Param("accountId") long accountId, @Param("blogId") long blogId);
+
+//  @Select("select * from blog where `id` = #{id}")
+//  Blog select(@Param("id") long id);
+  Blog select(long id);
+
+//  @Select("select * from blog")
+//  List<Blog> blogs();
   List<Blog> blogs();
 
-  @Select("select * from blog order by `create_at` desc limit #{count}")
-  List<Blog> newest(@Param("count") int count);
+//  @Select("select * from blog order by `create_at` desc limit #{count}")
+//  List<Blog> newest(@Param("count") int count);
+  List<Blog> newest(int count);
 }

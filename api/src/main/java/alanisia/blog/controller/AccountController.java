@@ -22,22 +22,17 @@ public class AccountController {
 
   @PostMapping("/login")
   public R login(@RequestBody Login login) {
-    // log.info("{}: login", login.getEmail());
-    // LoginResult result = accountService.login(login);
-    // return new R(result.getResult()).setData(result.getDto());
     Token token = accountService.login(login);
     return R.ok().setData(token);
   }
 
   @PostMapping("/register")
   public R register(@RequestBody Register register) {
-    // log.info("{}: register", register.getEmail());
     return new R(accountService.register(register));
   }
 
   @PostMapping("/captcha")
   public R captcha(String captchaImage) {
-    // log.info("captcha");
     return new R(Result.OK).setData(accountService.captcha(captchaImage).getBase64());
   }
 

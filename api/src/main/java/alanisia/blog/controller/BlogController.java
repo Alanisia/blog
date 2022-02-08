@@ -3,12 +3,11 @@ package alanisia.blog.controller;
 import alanisia.blog.common.result.R;
 import alanisia.blog.service.BlogService;
 import alanisia.blog.vo.BlogVO;
+import alanisia.blog.vo.StarVO;
 import alanisia.blog.vo.UpdateBlogVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @CrossOrigin
@@ -26,6 +25,18 @@ public class BlogController {
   @PostMapping("/publish")
   public R publish(@RequestBody BlogVO blog) {
     blogService.insertBlog(blog);
+    return R.ok();
+  }
+
+  @PostMapping("/star")
+  public R star(@RequestBody StarVO starVO) {
+    blogService.starBlog(starVO);
+    return R.ok();
+  }
+
+  @PostMapping("/star/cancel")
+  public R cancelStar(@RequestBody StarVO starVO) {
+    blogService.cancelStar(starVO);
     return R.ok();
   }
 

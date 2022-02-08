@@ -19,28 +19,53 @@ public interface UserDao {
   void update(@Param("detail") UserDetail detail);
 
   @Select("select * from user_detail where id = #{id}")
+  @Results({
+    @Result(column = "id", property = "id"),
+    @Result(column = "account_id", property = "accountId"),
+    @Result(column = "gender", property = "gender"),
+    @Result(column = "avatar", property = "avatar"),
+    @Result(column = "create_at", property = "createAt"),
+    @Result(column = "update_at", property = "updateAt")
+  })
   UserDetail detail(@Param("id") long id);
 
   @Select("select * from blog_history where account_id = #{accountId}")
+  @Results({
+    @Result(column = "id", property = "id"),
+    @Result(column = "account_id", property = "accountId"),
+    @Result(column = "blog_id", property = "blogId"),
+    @Result(column = "create_at", property = "createAt")
+  })
   List<BlogHistory> history(@Param("accountId") long accountId);
 
   @Select("select count(*) from blog_history where account_id = #{accountId}")
   int historyCount(@Param("accountId") long accountId);
 
-  @Select("select * from blog where account_id = #{account_id} and draft = 1")
-  List<Blog> draft(@Param("accountId") long accountId);
+  @Delete("delete from blog_history where account_id = #{accountId} and blog_id = #{blogId}")
+  void removeHistory(@Param("accountId") long accountId, @Param("blogId") long blogId);
+
+  // @Select("select * from blog where account_id = #{account_id} and draft = 1")
+  // List<Blog> draft(@Param("accountId") long accountId);
+  List<Blog> draft(long accountId);
 
   @Select("select count(*) from blog where account_id = #{accountId} and draft = 1")
   int draftCount(@Param("accountId") long accountId);
 
   @Select("select * from star_blog where account_id = #{accountId}")
+  @Results({
+    @Result(column = "id", property = "id"),
+    @Result(column = "account_id", property = "accountId"),
+    @Result(column = "blog_id", property = "blogId"),
+    @Result(column = "create_at", property = "createAt")
+  })
   List<StarBlog> star(@Param("accountId") long accountId);
 
   @Select("select count(*) from star_blog where account_id = #{accountId}")
   int starCount(@Param("accountId") long accountId);
 
-  @Select("select * from blog where account_id = #{id} and draft = 0")
-  List<Blog> publish(@Param("id") long id);
+  // @Select("select * from blog where account_id = #{id} and draft = 0")
+  // List<Blog> publish(@Param("id") long id);
+  List<Blog> publish(long accountId);
 
   @Select("select count(*) from blog where account_id = #{id} and draft = 0")
   int publishCount(@Param("id") long id);
