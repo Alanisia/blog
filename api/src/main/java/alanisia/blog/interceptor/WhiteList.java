@@ -20,7 +20,6 @@ public class WhiteList implements WebMvcConfigurer {
     pathPatterns.add("captcha");
     pathPatterns.add("blog/newest");
     pathPatterns.add("blog/category");
-    pathPatterns.add("blog/tag");
     pathPatterns.add("blog/search");
     registration.excludePathPatterns(pathPatterns);
   }

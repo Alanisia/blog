@@ -14,7 +14,7 @@ public class Blog implements Serializable {
   private int categoryId;
   private String title;
   private String content;
-  private boolean draft;
+  private int draft;
   private int star;
   private int like;
   private Date createAt;

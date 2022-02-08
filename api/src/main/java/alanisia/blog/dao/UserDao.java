@@ -27,10 +27,10 @@ public interface UserDao {
   @Select("select count(*) from blog_history where account_id = #{accountId}")
   int historyCount(@Param("accountId") long accountId);
 
-  @Select("select * from blog where account_id = #{account_id} and draft = true")
+  @Select("select * from blog where account_id = #{account_id} and draft = 1")
   List<Blog> draft(@Param("accountId") long accountId);
 
-  @Select("select count(*) from blog where account_id = #{accountId} and draft = true")
+  @Select("select count(*) from blog where account_id = #{accountId} and draft = 1")
   int draftCount(@Param("accountId") long accountId);
 
   @Select("select * from star_blog where account_id = #{accountId}")
@@ -39,9 +39,9 @@ public interface UserDao {
   @Select("select count(*) from star_blog where account_id = #{accountId}")
   int starCount(@Param("accountId") long accountId);
 
-  @Select("select * from blog where account_id = #{id}")
+  @Select("select * from blog where account_id = #{id} and draft = 0")
   List<Blog> publish(@Param("id") long id);
 
-  @Select("select count(*) from blog where account_id = #{id}")
+  @Select("select count(*) from blog where account_id = #{id} and draft = 0")
   int publishCount(@Param("id") long id);
 }

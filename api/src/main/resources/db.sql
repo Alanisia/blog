@@ -61,21 +61,6 @@ create table `user_detail`(
     key `key_account_id`(`account_id`)
 )engine=InnoDB default charset=utf8mb4;
 
-drop table if exists `tag`;
-create table `tag`(
-	  `id` tinyint not null auto_increment,
-    `name` varchar(16) not null,
-    `create_at` datetime not null default current_timestamp,
-    `update_at` datetime not null default current_timestamp on update current_timestamp,
-    primary key(`id`)
-)engine=InnoDB default charset=utf8mb4;
-
-insert into `tag`(`name`) values('C/C++'), ('Java'), ('Python'), ('C#'), ('Go'), ('Node.JS'),
-  ('前端'), ('后端'), ('网络安全'), ('Rust'), ('Android'), ('iOS'), ('Windows'), ('Linux'), ('Swift'),
-  ('Objective-C'), ('PHP'), ('R'), ('大数据'), ('机器学习'), ('人工智能'), ('区块链'), ('分布式'),
-  ('汇编'), ('网络编程'), ('计算机网络'), ('计算机组成原理'), ('操作系统'), ('数据库'), ('NoSQL'), ('MySQL'),
-  ('Redis'), ('Shell'), ('ZooKeeper'), ('Ruby'), ('运维'), ('测试');
-
 drop table if exists `category`;
 create table `category`(
 	  `id` tinyint not null auto_increment,
@@ -86,7 +71,7 @@ create table `category`(
     primary key(`id`)
 )engine=InnoDB default charset=utf8mb4;
 
-insert into `category`(`name`, `route`) values('技术文章', 'tech'), ('个人随笔', 'personal');
+-- insert into `category`(`name`, `route`) values('技术文章', 'tech'), ('个人随笔', 'personal');
 
 drop table if exists `blog`;
 create table `blog`(
@@ -122,17 +107,6 @@ create table `blog_history`(
     `create_at` datetime not null default current_timestamp,
     primary key(`id`),
     key `key_account_id`(`account_id`)
-)engine=InnoDB default charset=utf8mb4;
-
-drop table if exists `tag_blog`;
-create table `tag_blog` (
-  `id` bigint not null auto_increment,
-  `blog_id` bigint not null,
-  `tag_id` tinyint not null,
-  `create_at` datetime not null default current_timestamp,
-  `update_at` datetime not null default current_timestamp on update current_timestamp,
-  primary key(`id`),
-  key `key_tag_id`(`tag_id`)
 )engine=InnoDB default charset=utf8mb4;
 
 drop table if exists `comment`;
