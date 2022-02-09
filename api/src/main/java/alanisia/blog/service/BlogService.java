@@ -9,7 +9,7 @@ import alanisia.blog.dto.BlogItem;
 import alanisia.blog.model.Account;
 import alanisia.blog.model.Blog;
 import alanisia.blog.vo.BlogVO;
-import alanisia.blog.vo.StarVO;
+import alanisia.blog.vo.AccountIdAndBlogId;
 import alanisia.blog.vo.UpdateBlogVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,14 +53,14 @@ public class BlogService {
     blogDao.delete(id);
   }
 
-  public void starBlog(StarVO starVO) {
-    log.debug("star = {}", JsonUtil.json(starVO));
-    blogDao.star(starVO.getAccountId(), starVO.getBlogId());
+  public void starBlog(AccountIdAndBlogId accountIdAndBlogId) {
+    log.debug("star = {}", JsonUtil.json(accountIdAndBlogId));
+    blogDao.star(accountIdAndBlogId.getAccountId(), accountIdAndBlogId.getBlogId());
   }
 
-  public void cancelStar(StarVO starVO) {
-    log.debug("star = {}", JsonUtil.json(starVO));
-    blogDao.cancelStar(starVO.getAccountId(), starVO.getBlogId());
+  public void cancelStar(AccountIdAndBlogId accountIdAndBlogId) {
+    log.debug("star = {}", JsonUtil.json(accountIdAndBlogId));
+    blogDao.cancelStar(accountIdAndBlogId.getAccountId(), accountIdAndBlogId.getBlogId());
   }
 
   @Cacheable(value = "newest")

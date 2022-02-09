@@ -28,6 +28,12 @@ public interface BlogDao {
   @Delete("delete from star_blog where account_id = #{accountId} and blog_id = #{blogId}")
   void cancelStar(@Param("accountId") long accountId, @Param("blogId") long blogId);
 
+  @Insert("insert into like_blog(`account_id`, `blog_id`) values(#{accountId}, #{blogId})")
+  void like(@Param("accountId") long accountId, @Param("blogId") long blogId);
+
+  @Delete("delete from like_blog where account_id = #{accountId} and blog_id = #{blogId}")
+  void cancelLike(@Param("accountId") long accountId, @Param("blogId") long blogId);
+
 //  @Select("select * from blog where `id` = #{id}")
 //  Blog select(@Param("id") long id);
   Blog select(long id);

@@ -86,7 +86,8 @@ create table `blog`(
     `create_at` datetime not null default current_timestamp,
     `update_at` datetime not null default current_timestamp on update current_timestamp,
     primary key(`id`),
-    key `key_account_id`(`account_id`)
+    key `key_account_id`(`account_id`),
+
 )engine=InnoDB default charset=utf8mb4;
 
 drop table if exists `star_blog`;
@@ -99,6 +100,16 @@ create table `star_blog`(
     key `key_account_id`(`account_id`)
 )engine=InnoDB default charset=utf8mb4;
 
+drop table if exists `like_blog`;
+create table `like_blog`(
+  `id` bigint not null,
+  `blog_id` bigint not null,
+  `account_id` bigint not null,
+  `create_at` datetime not null default current_timestamp,
+  primary key(`id`),
+  key `key_blog_id_account_id`(`blog_id`, `account_id`)
+)engine=InnoDB default charset=utf8mb4;
+
 drop table if exists `blog_history`;
 create table `blog_history`(
     `id` bigint not null,
@@ -106,7 +117,8 @@ create table `blog_history`(
     `blog_id` bigint not null,
     `create_at` datetime not null default current_timestamp,
     primary key(`id`),
-    key `key_account_id`(`account_id`)
+    key `key_account_id`(`account_id`),
+    key `key_account_id_blog_id`(`account_id`, `blog_id`)
 )engine=InnoDB default charset=utf8mb4;
 
 drop table if exists `comment`;

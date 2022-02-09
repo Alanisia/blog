@@ -6,7 +6,7 @@ import alanisia.blog.dto.BlogInfo;
 import alanisia.blog.exception.BusinessException;
 import alanisia.blog.service.BlogService;
 import alanisia.blog.service.UserService;
-import alanisia.blog.vo.StarVO;
+import alanisia.blog.vo.AccountIdAndBlogId;
 import alanisia.blog.vo.UserDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -66,7 +66,7 @@ public class UserController {
         blogService.deleteBlog(blogId);
         break;
       case "star":
-        blogService.cancelStar(new StarVO().setAccountId(id).setBlogId(blogId));
+        blogService.cancelStar(new AccountIdAndBlogId().setAccountId(id).setBlogId(blogId));
         break;
       case "history":
         userService.removeHistory(id, blogId);

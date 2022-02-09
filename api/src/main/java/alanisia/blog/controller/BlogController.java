@@ -3,7 +3,7 @@ package alanisia.blog.controller;
 import alanisia.blog.common.result.R;
 import alanisia.blog.service.BlogService;
 import alanisia.blog.vo.BlogVO;
-import alanisia.blog.vo.StarVO;
+import alanisia.blog.vo.AccountIdAndBlogId;
 import alanisia.blog.vo.UpdateBlogVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +29,24 @@ public class BlogController {
   }
 
   @PostMapping("/star")
-  public R star(@RequestBody StarVO starVO) {
-    blogService.starBlog(starVO);
+  public R star(@RequestBody AccountIdAndBlogId accountIdAndBlogId) {
+    blogService.starBlog(accountIdAndBlogId);
     return R.ok();
   }
 
   @PostMapping("/star/cancel")
-  public R cancelStar(@RequestBody StarVO starVO) {
-    blogService.cancelStar(starVO);
+  public R cancelStar(@RequestBody AccountIdAndBlogId accountIdAndBlogId) {
+    blogService.cancelStar(accountIdAndBlogId);
+    return R.ok();
+  }
+
+  @PostMapping("/like")
+  public R like(@RequestBody AccountIdAndBlogId accountIdAndBlogId) {
+    return R.ok();
+  }
+
+  @PostMapping("/like/cancel")
+  public R cancelLike(@RequestBody AccountIdAndBlogId accountIdAndBlogId) {
     return R.ok();
   }
 
