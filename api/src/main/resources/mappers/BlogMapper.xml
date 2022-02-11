@@ -7,7 +7,7 @@
   <resultMap id="BlogResultMap" type="alanisia.blog.model.Blog">
     <id column="id" jdbcType="BIGINT" property="id"/>
     <result column="account_id" jdbcType="BIGINT" property="accountId"/>
-    <result column="category_id" jdbcType="BIGINT" property="categoryId"/>
+    <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
     <result column="title" jdbcType="VARCHAR" property="title"/>
     <result column="content" jdbcType="LONGVARCHAR" property="content"/>
     <result column="like" jdbcType="INTEGER" property="like"/>
@@ -23,5 +23,10 @@
   </select>
   <select id="blogs" resultMap="BlogResultMap">
     select * from blog
+  </select>
+  <select id="selectByCategory" resultMap="BlogResultMap">
+    select * from blog where `category_id` = #{id,jdbcType=INTEGER}
+      limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
+      order by update_at desc
   </select>
 </mapper>

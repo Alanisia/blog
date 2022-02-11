@@ -6,6 +6,7 @@ import alanisia.blog.dao.BlogDao;
 import alanisia.blog.dao.CategoryDao;
 import alanisia.blog.dto.BlogDetail;
 import alanisia.blog.dto.BlogItem;
+import alanisia.blog.dto.BlogPagination;
 import alanisia.blog.model.Account;
 import alanisia.blog.model.Blog;
 import alanisia.blog.vo.BlogVO;
@@ -59,12 +60,22 @@ public class BlogService {
   }
 
   public void cancelStar(AccountIdAndBlogId accountIdAndBlogId) {
-    log.debug("star = {}", JsonUtil.json(accountIdAndBlogId));
+    log.debug("cancel star = {}", JsonUtil.json(accountIdAndBlogId));
     blogDao.cancelStar(accountIdAndBlogId.getAccountId(), accountIdAndBlogId.getBlogId());
   }
 
+  public void likeBlog(AccountIdAndBlogId accountIdAndBlogId) {
+    log.debug("like = {}", JsonUtil.json(accountIdAndBlogId));
+    blogDao.like(accountIdAndBlogId.getAccountId(), accountIdAndBlogId.getBlogId());
+  }
+
+  public void cancelLike(AccountIdAndBlogId accountIdAndBlogId) {
+    log.debug("cancel like = {}", JsonUtil.json(accountIdAndBlogId));
+    blogDao.cancelLike(accountIdAndBlogId.getAccountId(), accountIdAndBlogId.getBlogId());
+  }
+
   @Cacheable(value = "newest")
-  public List<BlogItem> ListOfNewest() {
+  public List<BlogItem> listOfNewest() {
     List<Blog> newestBlogs = blogDao.newest(50);
     List<BlogItem> items = new ArrayList<>();
     newestBlogs.forEach(blog -> {
@@ -77,12 +88,29 @@ public class BlogService {
     return items;
   }
 
+  @Cacheable(value = "list_category", key = "#id + '-' + #page")
+  public BlogPagination listWithCategory(int id, int page, int limit) {
+    BlogPagination p = new BlogPagination()
+      .setCurrentPage(page).setPages(blogDao.countOfCategory(id) % limit + 1);
+    int offset = limit * (page - 1);
+    List<Blog> blogs = blogDao.selectByCategory(id, limit, offset);
+    List<BlogItem> items = new ArrayList<>();
+    blogs.forEach(blog -> {
+      BlogItem item = new BlogItem().setId(blog.getId())
+        .setAuthor(accountDao.select(blog.getAccountId()).getUsername())
+        .setTitle(blog.getTitle()).setStar(blog.getStar()).setComment(0) // TODO: comment
+        .setLike(blog.getLike()).setUpdateAt(blog.getUpdateAt());
+      items.add(item);
+    });
+    return p.setItems(items);
+  }
+
   @Cacheable(value = "blog_detail", key = "#id")
   public BlogDetail detail(long id) {
     Blog blog = blogDao.select(id);
     Account account = accountDao.select(blog.getAccountId());
-    return (BlogDetail) new BlogDetail()
-      .setAuthor(account.getUsername())
+    return new BlogDetail().setId(id).setTitle(blog.getTitle()).setStars(blog.getStar())
+      .setAuthor(account.getUsername()).setUpdateTime(blog.getUpdateAt()).setLikes(blog.getLike())
       .setCategory(categoryDao.category(blog.getCategoryId()).getName())
       .setContent(blog.getContent());
   }

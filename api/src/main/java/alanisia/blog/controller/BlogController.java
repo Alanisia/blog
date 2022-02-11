@@ -42,11 +42,13 @@ public class BlogController {
 
   @PostMapping("/like")
   public R like(@RequestBody AccountIdAndBlogId accountIdAndBlogId) {
+    blogService.likeBlog(accountIdAndBlogId);
     return R.ok();
   }
 
   @PostMapping("/like/cancel")
   public R cancelLike(@RequestBody AccountIdAndBlogId accountIdAndBlogId) {
+    blogService.cancelLike(accountIdAndBlogId);
     return R.ok();
   }
 
@@ -64,7 +66,7 @@ public class BlogController {
 
   @GetMapping("/newest")
   public R newest() {
-    return R.ok().setData(blogService.ListOfNewest());
+    return R.ok().setData(blogService.listOfNewest());
   }
 
   @GetMapping("/search")
@@ -73,8 +75,8 @@ public class BlogController {
   }
 
   @GetMapping("/category")
-  public R showByCategory(int categoryId) {
-    return R.ok();
+  public R showByCategory(int categoryId, int page) {
+    return R.ok().setData(blogService.listWithCategory(categoryId, page, 30));
   }
 
   @GetMapping("/blog/{id}")

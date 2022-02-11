@@ -1,4 +1,15 @@
 package alanisia.blog.dto;
 
-public class BlogPagination {
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.List;
+
+@Data
+@Accessors(chain = true)
+public class BlogPagination implements Serializable {
+  private int pages;
+  private int currentPage;
+  private List<BlogItem> items;
 }

@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="blogs">
+  <el-table :data="blogs" highlight-current-row @row-click="rowClick">
     <el-table-column prop="id" label="ID"></el-table-column>
     <el-table-column prop="category" label="分类"></el-table-column>
     <el-table-column prop="title" label="标题"></el-table-column>
@@ -14,7 +14,14 @@
 <script>
 export default {
   name: "BlogList",
-  props: ['blogs']
+  props: ['blogs'],
+  methods: {
+    rowClick: function(row) {
+      // console.log(row); // , col, e);
+      let id = row.id;
+      this.$router.push(`/detail/${id}`);
+    },
+  } 
 };
 </script>
 

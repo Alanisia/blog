@@ -34,15 +34,17 @@ public interface BlogDao {
   @Delete("delete from like_blog where account_id = #{accountId} and blog_id = #{blogId}")
   void cancelLike(@Param("accountId") long accountId, @Param("blogId") long blogId);
 
-//  @Select("select * from blog where `id` = #{id}")
-//  Blog select(@Param("id") long id);
   Blog select(long id);
 
-//  @Select("select * from blog")
-//  List<Blog> blogs();
   List<Blog> blogs();
 
-//  @Select("select * from blog order by `create_at` desc limit #{count}")
-//  List<Blog> newest(@Param("count") int count);
   List<Blog> newest(int count);
+
+  List<Blog> selectByCategory(int id, int limit, int offset);
+
+  @Select("select count(*) from blog")
+  int count();
+
+  @Select("select count(*) from blog where category_id = #{id}")
+  int countOfCategory(@Param("id") int id);
 }
