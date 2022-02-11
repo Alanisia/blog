@@ -79,7 +79,7 @@ public class BlogController {
     return R.ok().setData(blogService.listWithCategory(categoryId, page, 30));
   }
 
-  @GetMapping("/blog/{id}")
+  @GetMapping("/{id}")
   public R details(@PathVariable("id") long id) {
     return R.ok().setData(blogService.detail(id));
   }

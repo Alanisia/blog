@@ -3,7 +3,10 @@ import VueRouter from 'vue-router';
 
 import Main from '@/components/main/Main';
 import Index from '@/components/main/Index';
+import Newest from '@/components/main/Newest';
+import Category from '@/components/main/Category';
 import Editor from '@/components/editor/Editor';
+import Detail from '@/components/detail/Detail';
 import Center from '@/components/center/Center';
 import Info from '@/components/center/info/Info';
 import History from '@/components/center/blog/History';
@@ -27,8 +30,12 @@ const routes = [
       {path: '/mine', component: Mine},
       {path: '/draft', component: Draft},
     ]},
+    {path: '/detail/:id', component: Detail},
     {path: '/editor', component: Editor},
-    {path: '/', component: Index},
+    {path: '/', component: Index, children: [
+      {path: '/', component: Newest},
+      {path: '/categories', component: Category}
+    ]},
   ]},
   {path: '/login', component: Login},
   {path: '/register', component: Register},

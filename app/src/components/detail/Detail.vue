@@ -1,27 +1,14 @@
 <template>
   <el-main>
-    <legend class="blog-legend">
-      <strong>{{ blog.title }}</strong>
-    </legend>
-    <!-- 
-    <el-descriptions>
-      <el-descriptions-item label="分类">{{ blog.category }}</el-descriptions-item>
-      <el-descriptions-item icon="el-icon-star-off">{{
-        blog.stars
-      }}</el-descriptions-item>
-      <el-descriptions-item icon="">{{ blog.likes }}</el-descriptions-item>
-      <el-descriptions-item icon="el-icon-chat-dot-square">{{
-        blog.comments
-      }}</el-descriptions-item>
-      <el-descriptions-item label="更新时间"></el-descriptions-item>
-    </el-descriptions>
-    -->
-    <legend class="blog-legend">分类：{{ blog.category }}</legend>
-    <div v-html="blog.content"></div>
+    <h1 style="text-align: center">{{ blog.title }}</h1>
+    <legend style="text-align: center">分类：{{ blog.category }}</legend>
+    <div v-html="contentHTML"></div>
     <p>
       更新时间：{{ blog.updateTime }}
       <span style="float: right">
-        <el-button icon="" @click="star">收藏 {{ blog.stars }}</el-button>
+        <el-button icon="el-icon-star-off" @click="star"
+          >收藏 {{ blog.stars }}</el-button
+        >
         <el-button icon="" @click="like">点赞 {{ blog.likes }}</el-button>
       </span>
     </p>
@@ -30,15 +17,19 @@
 </template>
 
 <script>
+import { marked } from "marked";
 import axios from "axios";
+import util from "../../util";
 export default {
   name: "Detail",
   data() {
     return {
       haveStarred: false,
       haveLiked: false,
+      contentHTML: "",
       blog: {
-        id: 0,
+        id: this.$route.params.id,
+        author: "",
         title: "",
         updateTime: "",
         category: "",
@@ -49,51 +40,124 @@ export default {
       },
     };
   },
-
   created() {
     this.loadBlog();
-    this.loadComment();
+    this.loadComments();
+  },
+  watch: {
+    'blog.content': function() {
+      this.contentHTML = marked(this.blog.content);
+    }
   },
   methods: {
-    loadBlog: function () {},
-    loadComment: function () {},
-    star: function () {
-      axios.post("/blog/star", {}).then((res) => {
-        const data = res.data;
-        if (!data.code) {
-          if (this.haveStarred) {
-            this.blog.stars--;
-            this.$message({
-              message: "取消收藏成功！",
-              type: "success",
-            });
-          } else {
-            this.blog.stars++;
-            this.$message({
-              message: "收藏成功！",
-              type: "success",
-            });
-          }
-          this.haveStarred = !this.haveStarred;
-        } else {
-          if (this.haveStarred) {
-            this.$message({
-              message: "取消收藏失败！",
-              type: "error",
-            });
-          } else {
-            this.$message({
-              message: "收藏失败！",
-              type: "error",
-            });
-          }
-        }
+    loadBlog: function () {
+      axios.get(`/blog/${this.blog.id}`).then(res => {
+        const data = res.data.data;
+        this.blog.id = data.id;
+        this.blog.author = data.author;
+        this.blog.title = data.title;
+        this.blog.category = data.category;
+        this.blog.content = data.content;
+        this.blog.comments = data.comments;
+        this.blog.stars = data.stars;
+        this.blog.likes = data.likes;
+        this.blog.updateTime = data.updateTime;
       });
     },
+    loadComments: function () {},
+    star: function () {
+      if (!this.haveStarred) {
+        axios
+          .post("/blog/star", {
+            accountId: util.getCurrentUser(),
+            blogId: this.blog.id,
+          })
+          .then((res) => {
+            const data = res.data;
+            if (!data.code) {
+              this.blog.stars++;
+              this.$message({
+                message: "收藏成功！",
+                type: "success",
+              });
+              this.haveStarred = true;
+            } else {
+              this.$message({
+                message: "收藏失败！",
+                type: "error",
+              });
+            }
+          });
+      } else {
+        axios
+          .post("/blog/star/cancel", {
+            accountId: util.getCurrentUser(),
+            blogId: this.blog.id,
+          })
+          .then((res) => {
+            const data = res.data;
+            if (!data.code) {
+              this.blog.stars--;
+              this.$message({
+                message: "取消收藏成功！",
+                type: "success",
+              });
+              this.haveStarred = false;
+            } else {
+              this.$message({
+                message: "取消收藏失败！",
+                type: "error",
+              });
+            }
+          });
+      }
+    },
     like: function () {
-      if (this.haveLiked) this.blog.likes--;
-      else this.blog.likes++;
-      this.haveLiked = !this.haveLiked;
+      if (!this.haveliked) {
+        axios
+          .post("/blog/like", {
+            accountId: util.getCurrentUser(),
+            blogId: this.blog.id,
+          })
+          .then((res) => {
+            const data = res.data;
+            if (!data.code) {
+              this.blog.likes++;
+              this.$message({
+                message: "点赞成功！",
+                type: "success",
+              });
+              this.haveliked = true;
+            } else {
+              this.$message({
+                message: "点赞失败！",
+                type: "error",
+              });
+            }
+          });
+      } else {
+        axios
+          .post("/blog/like/cancel", {
+            accountId: util.getCurrentUser(),
+            blogId: this.blog.id,
+          })
+          .then((res) => {
+            const data = res.data;
+            if (!data.code) {
+              this.blog.likes--;
+              this.$message({
+                message: "取消点赞成功！",
+                type: "success",
+              });
+              this.haveliked = false;
+            } else {
+              this.$message({
+                message: "取消点赞失败！",
+                type: "error",
+              });
+            }
+          });
+      }
     },
     comment: function () {},
   },
@@ -101,7 +165,4 @@ export default {
 </script>
 
 <style>
-.blog-legend {
-  text-align: center;
-}
 </style>

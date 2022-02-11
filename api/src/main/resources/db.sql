@@ -54,7 +54,6 @@ create table `user_detail`(
 	  `id` bigint not null auto_increment,
     `account_id` bigint not null,
     `gender` varchar(10) not null comment 'male/female',
-    -- `avatar` varchar(255) not null,
     `create_at` datetime not null default current_timestamp,
     `update_at` datetime not null default current_timestamp on update current_timestamp,
     primary key(`id`),
@@ -81,18 +80,15 @@ create table `blog`(
     `title` varchar(128) not null,
     `content` text not null,
     `draft` bool not null,
-    `like` int not null,
-    `star` int not null,
     `create_at` datetime not null default current_timestamp,
     `update_at` datetime not null default current_timestamp on update current_timestamp,
     primary key(`id`),
     key `key_account_id`(`account_id`),
-
 )engine=InnoDB default charset=utf8mb4;
 
 drop table if exists `star_blog`;
 create table `star_blog`(
-    `id` bigint not null,
+    `id` bigint not null auto_increment,
     `blog_id` bigint not null,
     `account_id` bigint not null,
     `create_at` datetime not null default current_timestamp,
@@ -102,7 +98,7 @@ create table `star_blog`(
 
 drop table if exists `like_blog`;
 create table `like_blog`(
-  `id` bigint not null,
+  `id` bigint not null auto_increment,
   `blog_id` bigint not null,
   `account_id` bigint not null,
   `create_at` datetime not null default current_timestamp,

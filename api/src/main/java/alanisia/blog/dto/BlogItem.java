@@ -9,6 +9,7 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 public class BlogItem implements Serializable {
+  private static final long serialVersionUID = -8114646902840273086L;
   private long id;
   private String category;
   private String title;

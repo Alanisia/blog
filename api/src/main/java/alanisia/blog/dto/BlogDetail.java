@@ -11,6 +11,7 @@ import java.util.Date;
 @Getter
 @Accessors(chain = true)
 public class BlogDetail implements Serializable {
+  private static final long serialVersionUID = -2458539532341863531L;
   private long id;
   private String author;
   private String category;

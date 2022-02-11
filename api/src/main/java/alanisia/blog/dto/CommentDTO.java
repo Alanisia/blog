@@ -9,6 +9,7 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 public class CommentDTO implements Serializable {
+  private static final long serialVersionUID = 2842499914481164619L;
   private long id;
   private long accountId;
   private long blogId;

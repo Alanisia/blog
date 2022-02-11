@@ -8,7 +8,7 @@
     <el-table-column prop="like" label="赞"></el-table-column>
     <el-table-column prop="comment" label="评论"></el-table-column>
     <el-table-column prop="updateAt" label="更新时间"></el-table-column>
-   <el-table-column align="right">
+   <el-table-column align="right" label="操作">
       <!-- <template slot="header">
         <el-input v-model="keyword" size="mini" placeholder="输入关键字搜索" />
       </template> -->

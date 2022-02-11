@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class Register implements Serializable {
+  private static final long serialVersionUID = -2384201616461592518L;
   private String email;
   private String username;
   private String password;

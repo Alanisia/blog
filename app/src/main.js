@@ -5,7 +5,7 @@ import App from './App.vue';
 import ElementUI from 'element-ui';
 import axios from 'axios';
 import 'element-ui/lib/theme-chalk/index.css';
-import 'bulma/css/bulma.css';
+// import 'bulma/css/bulma.css';
 import util from './util';
 
 Vue.use(ElementUI);

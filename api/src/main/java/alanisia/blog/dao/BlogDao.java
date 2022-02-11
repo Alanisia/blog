@@ -7,9 +7,8 @@ import java.util.List;
 
 @Mapper
 public interface BlogDao {
-  @Insert("insert into blog(`account_id`, `category_id`, `title`, `content`, `draft`, `like`, `star`)" +
-    " values(#{blog.accountId}, #{blog.categoryId}, #{blog.title}, #{blog.content}, " +
-    "#{blog.draft}, #{blog.like}, #{blog.star})")
+  @Insert("insert into blog(`account_id`, `category_id`, `title`, `content`, `draft`)" +
+    " values(#{blog.accountId}, #{blog.categoryId}, #{blog.title}, #{blog.content}, #{blog.draft})")
   @SelectKey(before = false, keyColumn = "id", keyProperty = "id", resultType = Long.class,
     statement = "select last_insert_id()")
   void insert(@Param("blog") Blog blog);
@@ -18,8 +17,7 @@ public interface BlogDao {
   void delete(@Param("id") long id);
 
   @Update("update blog set `account_id` = #{blog.accountId}, `category_id` = #{blog.categoryId}," +
-    " `title` = #{blog.title}, `content` = #{blog.content}, `draft` = #{blog.draft}, " +
-    " `like` = #{blog.like}, `star` = #{blog.star} where `id` = #{id}")
+    " `title` = #{blog.title}, `content` = #{blog.content}, `draft` = #{blog.draft} where `id` = #{id}")
   void update(@Param("id") long id, @Param("blog") Blog blog);
 
   @Insert("insert into star_blog(`account_id`, `blog_id`) values(#{accountId}, #{blogId})")
@@ -28,11 +26,17 @@ public interface BlogDao {
   @Delete("delete from star_blog where account_id = #{accountId} and blog_id = #{blogId}")
   void cancelStar(@Param("accountId") long accountId, @Param("blogId") long blogId);
 
+  @Select("select count(*) from star_blog where blog_id = #{id}")
+  int stars(@Param("id") long id);
+
   @Insert("insert into like_blog(`account_id`, `blog_id`) values(#{accountId}, #{blogId})")
   void like(@Param("accountId") long accountId, @Param("blogId") long blogId);
 
   @Delete("delete from like_blog where account_id = #{accountId} and blog_id = #{blogId}")
   void cancelLike(@Param("accountId") long accountId, @Param("blogId") long blogId);
+
+  @Select("select count(*) from like_blog where blog_id = #{id}")
+  int likes(@Param("id") long id);
 
   Blog select(long id);
 

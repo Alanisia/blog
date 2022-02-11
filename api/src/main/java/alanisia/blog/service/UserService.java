@@ -1,6 +1,7 @@
 package alanisia.blog.service;
 
 import alanisia.blog.common.enums.Result;
+import alanisia.blog.common.util.JsonUtil;
 import alanisia.blog.dao.AccountDao;
 import alanisia.blog.dao.BlogDao;
 import alanisia.blog.dao.CategoryDao;
@@ -17,7 +18,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -30,6 +30,7 @@ public class UserService {
 
   @CachePut(value = "user_detail", key = "#id")
   public void update(long id, UserDetailVO detailVO) {
+    log.debug("update user detail: id = {}, user = {}", id, JsonUtil.json(detailVO));
     Account account = accountDao.select(id);
     if (account == null)
       throw new BusinessException(Result.ACCOUNT_NOT_FOUND);
@@ -39,7 +40,6 @@ public class UserService {
         detail = new UserDetail()
           .setAccountId(id)
           .setGender(detailVO.getGender());
-          // .setAvatar(detailVO.getAvatar());
         userDao.insert(detail);
       } else userDao.update(detail);
       if (!account.getUsername().equals(detailVO.getUsername())) {
@@ -55,6 +55,7 @@ public class UserService {
 
   @Cacheable(value = "user_detail", key = "#id")
   public UserDetailDTO detail(long id) {
+    log.debug("user detail: id = {}", id);
     UserDetail detail = userDao.detail(id);
     Account account = accountDao.select(id);
     UserDetailDTO detailDTO = new UserDetailDTO()
@@ -65,12 +66,12 @@ public class UserService {
       .setStar(userDao.starCount(id));
     if (detail != null)
       detailDTO.setGender(detailDTO.getGender());
-        // .setAvatar(detailDTO.getAvatar());
     return detailDTO;
   }
 
   @Cacheable(value = "user_history", key = "#id")
   public List<BlogItem> history(long id) {
+    log.debug("blog history: id = {}", id);
     List<BlogHistory> histories = userDao.history(id);
     List<BlogItem> items = new ArrayList<>();
     histories.forEach(b -> {
@@ -84,8 +85,8 @@ public class UserService {
         .setAuthor(account.getUsername())
         .setCategory(category.getName())
         .setTitle(blog.getTitle())
-        .setLike(blog.getLike())
-        .setStar(blog.getStar())
+        .setLike(blogDao.likes(blog.getId()))
+        .setStar(blogDao.stars(blog.getId()))
         .setUpdateAt(blog.getUpdateAt());
       items.add(item);
     });
@@ -94,6 +95,7 @@ public class UserService {
 
   @Cacheable(value = "user_star", key = "#id")
   public List<BlogItem> star(long id) {
+    log.debug("blog starred by user: id = {}", id);
     List<StarBlog> starBlogs = userDao.star(id);
     List<BlogItem> items = new ArrayList<>();
     starBlogs.forEach(b -> {
@@ -107,8 +109,8 @@ public class UserService {
         .setAuthor(account.getUsername())
         .setCategory(category.getName())
         .setTitle(blog.getTitle())
-        .setLike(blog.getLike())
-        .setStar(blog.getStar())
+        .setLike(blogDao.likes(blog.getId()))
+        .setStar(blogDao.stars(blog.getId()))
         .setUpdateAt(blog.getUpdateAt());
       items.add(item);
     });
@@ -117,6 +119,7 @@ public class UserService {
 
   @Cacheable(value = "user_publish", key = "#id")
   public List<BlogItem> publish(long id) {
+    log.debug("blog published: id = {}", id);
     List<Blog> blogs = userDao.publish(id);
     List<BlogItem> items = new ArrayList<>();
     blogs.forEach(b -> {
@@ -130,8 +133,8 @@ public class UserService {
         .setAuthor(account.getUsername())
         .setCategory(category.getName())
         .setTitle(blog.getTitle())
-        .setLike(blog.getLike())
-        .setStar(blog.getStar())
+        .setLike(blogDao.likes(blog.getId()))
+        .setStar(blogDao.stars(blog.getId()))
         .setUpdateAt(blog.getUpdateAt());
       items.add(item);
     });
@@ -140,6 +143,7 @@ public class UserService {
 
   @Cacheable(value = "user_draft", key = "#id")
   public List<BlogItem> draft(long id) {
+    log.debug("blog saved as draft: id = {}", id);
     List<Blog> blogs = userDao.draft(id);
     List<BlogItem> items = new ArrayList<>();
     blogs.forEach(b -> {
@@ -153,8 +157,8 @@ public class UserService {
         .setAuthor(account.getUsername())
         .setCategory(category.getName())
         .setTitle(blog.getTitle())
-        .setLike(blog.getLike())
-        .setStar(blog.getStar())
+        .setLike(blogDao.likes(blog.getId()))
+        .setStar(blogDao.stars(blog.getId()))
         .setUpdateAt(blog.getUpdateAt());
       items.add(item);
     });
@@ -163,21 +167,25 @@ public class UserService {
 
   @Cacheable(value = "user_draft_count", key = "#id")
   public int drafts(long id) {
+    log.debug("count of draft: id = {}", id);
     return userDao.draftCount(id);
   }
 
   @Cacheable(value = "user_history_count", key = "#id")
   public int histories(long id) {
+    log.debug("count of history: id = {}", id);
     return userDao.historyCount(id);
   }
 
   @Cacheable(value = "user_publish_count", key = "#id")
   public int publishes(long id) {
+    log.debug("count of published: id = {}", id);
     return userDao.publishCount(id);
   }
 
   @Cacheable(value = "user_star_count", key = "#id")
   public int stars(long id) {
+    log.debug("count of starred: id = {}", id);
     return userDao.starCount(id);
   }
 }

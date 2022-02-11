@@ -34,12 +34,12 @@ public class BlogService {
       .setCategoryId(vo.getCategory().getId())
       .setTitle(vo.getTitle())
       .setContent(vo.getContent())
-      .setDraft(vo.getDraft())
-      .setLike(0).setStar(0);
+      .setDraft(vo.getDraft());
     blogDao.insert(blog);
   }
 
   public void updateBlog(UpdateBlogVO vo) {
+    log.debug("update blog: blog = {}", JsonUtil.json(vo));
     Blog blog = new Blog()
       .setAccountId(vo.getBlog().getAuthorId())
       .setCategoryId(vo.getBlog().getCategory().getId())
@@ -76,13 +76,17 @@ public class BlogService {
 
   @Cacheable(value = "newest")
   public List<BlogItem> listOfNewest() {
+    log.debug("blog newest");
     List<Blog> newestBlogs = blogDao.newest(50);
     List<BlogItem> items = new ArrayList<>();
     newestBlogs.forEach(blog -> {
+      int likes = blogDao.likes(blog.getId());
+      int stars = blogDao.stars(blog.getId());
       BlogItem item = new BlogItem().setId(blog.getId())
+        .setCategory(categoryDao.category(blog.getCategoryId()).getName())
         .setAuthor(accountDao.select(blog.getAccountId()).getUsername())
-        .setTitle(blog.getTitle()).setStar(blog.getStar()).setComment(0) // TODO: comment
-        .setLike(blog.getLike()).setUpdateAt(blog.getUpdateAt());
+        .setTitle(blog.getTitle()).setStar(stars).setComment(0) // TODO: comment
+        .setLike(likes).setUpdateAt(blog.getUpdateAt());
       items.add(item);
     });
     return items;
@@ -90,16 +94,20 @@ public class BlogService {
 
   @Cacheable(value = "list_category", key = "#id + '-' + #page")
   public BlogPagination listWithCategory(int id, int page, int limit) {
+    log.debug("list with category: id = {}, page = {}, limit = {}", id, page, limit);
     BlogPagination p = new BlogPagination()
       .setCurrentPage(page).setPages(blogDao.countOfCategory(id) % limit + 1);
     int offset = limit * (page - 1);
     List<Blog> blogs = blogDao.selectByCategory(id, limit, offset);
     List<BlogItem> items = new ArrayList<>();
     blogs.forEach(blog -> {
+      int likes = blogDao.likes(blog.getId());
+      int stars = blogDao.stars(blog.getId());
       BlogItem item = new BlogItem().setId(blog.getId())
+        .setCategory(categoryDao.category(blog.getCategoryId()).getName())
         .setAuthor(accountDao.select(blog.getAccountId()).getUsername())
-        .setTitle(blog.getTitle()).setStar(blog.getStar()).setComment(0) // TODO: comment
-        .setLike(blog.getLike()).setUpdateAt(blog.getUpdateAt());
+        .setTitle(blog.getTitle()).setStar(stars).setComment(0) // TODO: comment
+        .setLike(likes).setUpdateAt(blog.getUpdateAt());
       items.add(item);
     });
     return p.setItems(items);
@@ -107,10 +115,13 @@ public class BlogService {
 
   @Cacheable(value = "blog_detail", key = "#id")
   public BlogDetail detail(long id) {
+    log.debug("blog detail: id = {}", id);
     Blog blog = blogDao.select(id);
     Account account = accountDao.select(blog.getAccountId());
-    return new BlogDetail().setId(id).setTitle(blog.getTitle()).setStars(blog.getStar())
-      .setAuthor(account.getUsername()).setUpdateTime(blog.getUpdateAt()).setLikes(blog.getLike())
+    int likes = blogDao.likes(blog.getId());
+    int stars = blogDao.stars(blog.getId());
+    return new BlogDetail().setId(id).setTitle(blog.getTitle()).setStars(stars)
+      .setAuthor(account.getUsername()).setUpdateTime(blog.getUpdateAt()).setLikes(likes)
       .setCategory(categoryDao.category(blog.getCategoryId()).getName())
       .setContent(blog.getContent());
   }

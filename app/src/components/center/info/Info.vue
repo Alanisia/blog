@@ -27,7 +27,6 @@ export default {
         email: "",
         username: "",
         gender: "",
-        avatar: "",
         publish: 0,
         star: 0,
       },
@@ -45,13 +44,12 @@ export default {
         this.account.email = data.email;
         this.account.username = data.username;
         this.account.gender = data.gender;
-        this.account.avatar = data.avatar;
         this.account.publish = data.publish;
         this.account.star = data.star;
       });
     },
     modify: function() {
-      this.$refs.infoEdit.dialogVisible = true;
+      this.$refs['infoEdit'].dialogVisible = true;
     }
   },
 };

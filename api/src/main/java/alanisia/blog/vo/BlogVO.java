@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Data
 @Accessors
 public class BlogVO implements Serializable {
+  private static final long serialVersionUID = -6889046327620126876L;
   private long authorId;
   private String title;
   private Category category;
