@@ -14,7 +14,7 @@
         <el-radio v-model="infoForm.gender" label="male">男</el-radio>
         <el-radio v-model="infoForm.gender" label="female">女</el-radio>
       </el-form-item>
-      <el-form-item label="头像">
+      <!-- <el-form-item label="头像">
         <el-upload
           :limit="1"
           :show-file-list="false"
@@ -28,7 +28,7 @@
           />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" @click="modify">修改</el-button>
       </el-form-item>
@@ -45,9 +45,9 @@ export default {
   data() {
     return {
       infoForm: {
-        username: this.$props.account.username,
-        gender: this.$props.account.gender,
-        avatar: this.$props.account.avatar,
+        username: account.username,
+        gender: account.gender,
+        // avatar: this.$props.account.avatar,
       },
       dialogVisible: false,
     };
@@ -61,7 +61,7 @@ export default {
           detail: {
             username: this.infoForm.username,
             gender: this.infoForm.gender,
-            avatar: this.infoForm.avatar,
+            // avatar: this.infoForm.avatar,
           },
         })
         .then((res) => {
@@ -85,7 +85,7 @@ export default {
 </script>
 
 <style>
-.avatar-uploader .el-upload {
+/* .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
   cursor: pointer;
@@ -110,5 +110,5 @@ export default {
   width: 89px;
   height: 89px;
   display: block;
-}
+} */
 </style>

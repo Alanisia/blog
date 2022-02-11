@@ -12,7 +12,7 @@ public class UserDetailDTO implements Serializable {
   private String email;
   private String username;
   private String gender;
-  private String avatar;
+//  private String avatar;
   private int publish;
   private int star;
 }

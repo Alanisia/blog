@@ -54,7 +54,7 @@ create table `user_detail`(
 	  `id` bigint not null auto_increment,
     `account_id` bigint not null,
     `gender` varchar(10) not null comment 'male/female',
-    `avatar` varchar(255) not null,
+    -- `avatar` varchar(255) not null,
     `create_at` datetime not null default current_timestamp,
     `update_at` datetime not null default current_timestamp on update current_timestamp,
     primary key(`id`),
@@ -71,7 +71,7 @@ create table `category`(
     primary key(`id`)
 )engine=InnoDB default charset=utf8mb4;
 
--- insert into `category`(`name`, `route`) values('技术文章', 'tech'), ('个人随笔', 'personal');
+insert into `category`(`name`, `route`) values('个人随笔', 'personal');
 
 drop table if exists `blog`;
 create table `blog`(

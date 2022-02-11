@@ -10,5 +10,5 @@ import java.io.Serializable;
 public class UserDetailVO implements Serializable {
   private String username;
   private String gender;
-  private String avatar;
+//  private String avatar;
 }

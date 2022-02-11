@@ -38,8 +38,8 @@ public class UserService {
       if (detail == null) {
         detail = new UserDetail()
           .setAccountId(id)
-          .setGender(detailVO.getGender())
-          .setAvatar(detailVO.getAvatar());
+          .setGender(detailVO.getGender());
+          // .setAvatar(detailVO.getAvatar());
         userDao.insert(detail);
       } else userDao.update(detail);
       if (!account.getUsername().equals(detailVO.getUsername())) {
@@ -64,8 +64,8 @@ public class UserService {
       .setPublish(userDao.publishCount(id))
       .setStar(userDao.starCount(id));
     if (detail != null)
-      detailDTO.setGender(detailDTO.getGender())
-        .setAvatar(detailDTO.getAvatar());
+      detailDTO.setGender(detailDTO.getGender());
+        // .setAvatar(detailDTO.getAvatar());
     return detailDTO;
   }
 
