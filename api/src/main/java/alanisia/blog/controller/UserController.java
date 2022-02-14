@@ -8,6 +8,7 @@ import alanisia.blog.service.BlogService;
 import alanisia.blog.service.UserService;
 import alanisia.blog.vo.AccountIdAndBlogId;
 import alanisia.blog.vo.UserDetailVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +34,12 @@ public class UserController {
     return R.ok().setData(new BlogInfo()
         .setCount(userService.histories(id))
         .setItems(userService.history(id)));
+  }
+
+  @PostMapping("/history/insert")
+  public R insertHistory(@RequestBody AccountIdAndBlogId e) {
+    boolean success = userService.insertHistory(e.getAccountId(), e.getBlogId());
+    return R.ok().setData(success);
   }
 
   @GetMapping("/star/{id}")

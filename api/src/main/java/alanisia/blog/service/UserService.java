@@ -49,6 +49,16 @@ public class UserService {
     }
   }
 
+  // TODO: put into cache after inserting into database
+  // @CachePut(value = "user_history", key = "#id")
+  public boolean insertHistory(long id, long blogId) {
+    log.debug("insert history: id = {}, blogId = {}", id, blogId);
+    if (userDao.historyExists(id, blogId) > 0) return false;
+    userDao.insertHistory(id, blogId);
+    return true;
+  }
+
+  // TODO: evict from cache after removing from database
   public void removeHistory(long id, long blogId) {
     userDao.removeHistory(id, blogId);
   }

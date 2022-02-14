@@ -43,6 +43,7 @@ export default {
   created() {
     this.loadBlog();
     this.loadComments();
+    this.insertHistory();
   },
   watch: {
     'blog.content': function() {
@@ -158,6 +159,12 @@ export default {
             }
           });
       }
+    },
+    insertHistory: function() {
+      axios.post("/history/insert", {
+        accountId: util.getCurrentUser(),
+        blogId: this.blog.id
+      });
     },
     comment: function () {},
   },

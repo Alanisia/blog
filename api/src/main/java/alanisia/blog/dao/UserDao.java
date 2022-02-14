@@ -23,7 +23,6 @@ public interface UserDao {
     @Result(column = "id", property = "id"),
     @Result(column = "account_id", property = "accountId"),
     @Result(column = "gender", property = "gender"),
-//    @Result(column = "avatar", property = "avatar"),
     @Result(column = "create_at", property = "createAt"),
     @Result(column = "update_at", property = "updateAt")
   })
@@ -41,8 +40,14 @@ public interface UserDao {
   @Select("select count(*) from blog_history where account_id = #{accountId}")
   int historyCount(@Param("accountId") long accountId);
 
+  @Insert("insert into blog_history(account_id, blog_id) values(#{accountId}, #{blogId})")
+  void insertHistory(@Param("accountId") long accountId, @Param("blogId") long blogId);
+
   @Delete("delete from blog_history where account_id = #{accountId} and blog_id = #{blogId}")
   void removeHistory(@Param("accountId") long accountId, @Param("blogId") long blogId);
+
+  @Select("select count(*) from blog_history where account_id = #{accountId} and blog_id = #{blog_id}")
+  int historyExists(@Param("accountId") long accountId, @Param("blogId") long blogId);
 
   List<Blog> draft(long accountId);
 
