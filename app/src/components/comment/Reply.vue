@@ -1,9 +1,10 @@
 <template>
   <div>
-      <el-image :src='avatar'/>
-      <p>{{username}} 回复： {{target}}</p>
-      <p>{{ content }}</p>
-      <p><i class="">{{like}}</i><span>{{time}}</span></p>
+    <p>{{ username }} 回复： {{ target }}</p>
+    <p>{{ content }}</p>
+    <p>
+      <i class="">{{ like }}</i><span>{{ time }}</span>
+    </p>
   </div>
 </template>
 
@@ -12,7 +13,6 @@ export default {
   name: "Reply",
   data() {
     return {
-      avatar: "",
       username: "",
       target: "",
       content: "",
@@ -23,8 +23,7 @@ export default {
       target: 0,
     };
   },
-  methods: {
-  },
+  methods: {},
 };
 </script>
 

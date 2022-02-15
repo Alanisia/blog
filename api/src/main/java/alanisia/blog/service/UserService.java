@@ -13,7 +13,6 @@ import alanisia.blog.model.*;
 import alanisia.blog.vo.UserDetailVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -28,9 +27,11 @@ public class UserService {
   @Autowired private CategoryDao categoryDao;
   @Autowired private UserDao userDao;
 
-  @CachePut(value = "user_detail", key = "#id")
-  public void update(long id, UserDetailVO detailVO) {
-    log.debug("update user detail: id = {}, user = {}", id, JsonUtil.json(detailVO));
+  // TODO: put into cache after updating
+  // @CachePut(value = "user_detail", key = "#detailVO.id")
+  public void update(UserDetailVO detailVO) {
+    log.debug("update user detail: user = {}", JsonUtil.json(detailVO));
+    long id = detailVO.getId();
     Account account = accountDao.select(id);
     if (account == null)
       throw new BusinessException(Result.ACCOUNT_NOT_FOUND);
@@ -75,7 +76,7 @@ public class UserService {
       .setPublish(userDao.publishCount(id))
       .setStar(userDao.starCount(id));
     if (detail != null)
-      detailDTO.setGender(detailDTO.getGender());
+      detailDTO.setGender(detail.getGender());
     return detailDTO;
   }
 

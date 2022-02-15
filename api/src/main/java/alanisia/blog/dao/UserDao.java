@@ -10,12 +10,10 @@ import java.util.List;
 
 @Mapper
 public interface UserDao {
-  @Insert("insert into user_detail(account_id, gender, avatar) " +
-    "values(#{detail.accountId}), #{detail.gender})") // , #{detail.avatar})")
+  @Insert("insert into user_detail(account_id, gender) values(#{detail.accountId}, #{detail.gender})")
   void insert(@Param("detail") UserDetail detail);
 
-  @Update("update user_detail set gender = #{detail.gender}" + // avatar = #{detail.avatar}" +
-    " where account_id = #{detail.accountId}")
+  @Update("update user_detail set gender = #{detail.gender} where account_id = #{detail.accountId}")
   void update(@Param("detail") UserDetail detail);
 
   @Select("select * from user_detail where id = #{id}")
@@ -46,7 +44,7 @@ public interface UserDao {
   @Delete("delete from blog_history where account_id = #{accountId} and blog_id = #{blogId}")
   void removeHistory(@Param("accountId") long accountId, @Param("blogId") long blogId);
 
-  @Select("select count(*) from blog_history where account_id = #{accountId} and blog_id = #{blog_id}")
+  @Select("select count(*) from blog_history where account_id = #{accountId} and blog_id = #{blogId}")
   int historyExists(@Param("accountId") long accountId, @Param("blogId") long blogId);
 
   List<Blog> draft(long accountId);

@@ -11,7 +11,6 @@ public class UserDetail {
   private long id;
   private long accountId;
   private String gender;
-//  private String avatar;
   private Date createAt;
   private Date updateAt;
 }

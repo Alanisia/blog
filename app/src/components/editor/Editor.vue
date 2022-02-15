@@ -22,10 +22,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <codemirror
-          :options="cmOptions"
-          v-model="editorForm.content"
-        ></codemirror>
+        <common-editor ref="mdEditor"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="display">演示</el-button>
@@ -40,55 +37,20 @@
 <script>
 import Display from "@/components/editor/Display";
 import axios from "axios";
-import {codemirror} from "vue-codemirror";
 import util from "../../util";
-
-import "codemirror/lib/codemirror.css";
-import "codemirror/addon/hint/show-hint.css";
-import "codemirror/addon/fold/foldgutter.css";
-import "codemirror/addon/selection/active-line";
-import "codemirror/addon/edit/matchbrackets";
-import "codemirror/addon/edit/closebrackets";
-import "codemirror/addon/fold/foldcode";
-import "codemirror/addon/fold/foldgutter";
-import "codemirror/addon/fold/brace-fold";
-import "codemirror/addon/fold/comment-fold";
-import "codemirror/addon/hint/show-hint";
-import "codemirror/addon/hint/anyword-hint";
-import "codemirror/keymap/sublime";
-import "codemirror/mode/markdown/markdown";
+import CommonEditor from '../common/CommonEditor.vue';
 
 export default {
   name: "Editor",
-  components: { Display, codemirror }, 
+  components: { Display, CommonEditor }, 
   data() {
     return {
       categories: [],
-      accountId: localStorage.getItem(parseInt(util.currentUser)),
+      accountId: util.getCurrentUser(),
       editorForm: {
         title: "",
         content: "",
         category: 0,
-      },
-      cmOptions: {
-        mode: "markdown",
-        lineNumbers: true,
-        indentWithTabs: true,
-        indentUnit: 4,
-        tabSize: 4,
-        styleActiveLine: true,
-        matchBrackets: true,
-        autoCloseBrackets: true,
-        foldGutter: true,
-        lint: true,
-        hintOptions: {
-          completeSingle: false,
-        },
-        gutters: [
-          "CodeMirror-linenumbers",
-          "CodeMirror-foldgutter",
-          "CodeMirror-lint-markers",
-        ],
       },
     };
   },
@@ -97,11 +59,13 @@ export default {
   },
   methods: {
     display: function () {
+      this.editorForm.content = this.$refs.mdEditor.content;
       this.$refs.displayDialog.mdText = this.editorForm.content;
       this.$refs.displayDialog.displayVisible = true;
     },
     publish: function () {
-      if (localStorage.getItem(util.commonToken) === null) {
+      this.editorForm.content = this.$refs.mdEditor.content;
+      if (util.getToken() === null) {
         this.$message({
           message: "未登录，请先登录",
           type: "error",
@@ -135,6 +99,7 @@ export default {
       }
     },
     save: function () {
+      this.editorForm.content = this.$refs.mdEditor.content;
       if (localStorage.getItem(util.commonToken) === null) {
         this.$message({
           message: "未登录，请先登录",
@@ -178,7 +143,4 @@ export default {
 </script>
 
 <style>
-.CodeMirror-sizer {
-  line-height: 22px;
-}
 </style>

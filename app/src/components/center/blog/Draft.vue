@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h3>博文草稿箱</h3>
     <p>共有数据{{ count }}条</p>
     <blog-list :blogs="items" type="draft"/>
   </div>

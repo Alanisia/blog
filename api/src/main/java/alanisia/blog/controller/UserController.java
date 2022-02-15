@@ -23,9 +23,9 @@ public class UserController {
     return R.ok().setData(userService.detail(id));
   }
 
-  @PostMapping("/info/modify/{id}")
-  public R modifyInfo(@PathVariable("id") long id, UserDetailVO detail) {
-    userService.update(id, detail);
+  @PostMapping("/info/modify")
+  public R modifyInfo(@RequestBody UserDetailVO detail) {
+    userService.update(detail);
     return R.ok();
   }
 

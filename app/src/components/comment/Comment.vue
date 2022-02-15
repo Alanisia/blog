@@ -1,6 +1,5 @@
 <template>
   <div>
-    <el-image :src="avatar" />
     <p>{{ username }}</p>
     <p>{{ content }}</p>
     <p>
@@ -18,7 +17,6 @@ export default {
   name: "Comment",
   data() {
     return {
-      avatar: "",
       username: "",
       content: "",
       like: 0,

@@ -108,7 +108,7 @@ create table `like_blog`(
 
 drop table if exists `blog_history`;
 create table `blog_history`(
-    `id` bigint not null,
+    `id` bigint not null auto_increment,
     `account_id` bigint not null,
     `blog_id` bigint not null,
     `create_at` datetime not null default current_timestamp,

@@ -17,7 +17,6 @@ export default {
   props: ['blogs'],
   methods: {
     rowClick: function(row) {
-      // console.log(row); // , col, e);
       let id = row.id;
       this.$router.push(`/detail/${id}`);
     },

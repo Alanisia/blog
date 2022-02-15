@@ -39,13 +39,12 @@ export default {
   methods: {
     modify: function () {
       const id = util.getCurrentUser();
+      console.log(this.infoForm);
       axios
-        .post(`/info/modify/${id}`, {
+        .post(`/info/modify`, {
           id: id,
-          detail: {
-            username: this.infoForm.username,
-            gender: this.infoForm.gender,
-          },
+          username: this.infoForm.username,
+          gender: this.infoForm.gender,
         })
         .then((res) => {
           const data = res.data;

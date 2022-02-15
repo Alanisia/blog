@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h3>我发表的博文</h3>
     <p>共有数据{{ count }}条</p>
     <div>
       <blog-list :blogs="items" type="publish"/>
@@ -29,7 +30,6 @@ export default {
         const data = res.data.data;
         this.count = data.count;
         this.items = data.items;
-        console.log(this.items);
       });
     },
   },

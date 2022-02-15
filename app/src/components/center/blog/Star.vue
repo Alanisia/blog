@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h3>我收藏的博文</h3>
     <p>共有数据{{ count }}条</p>
     <blog-list :blogs="items" type="star"/>
   </div>
