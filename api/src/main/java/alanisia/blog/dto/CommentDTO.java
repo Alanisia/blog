@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 public class CommentDTO implements Serializable {
-  private static final long serialVersionUID = 2842499914481164619L;
+  private static final long serialVersionUID = -4236899487843283673L;
   private long id;
   private long accountId;
   private long blogId;
@@ -18,5 +18,6 @@ public class CommentDTO implements Serializable {
   private String commenter;
   private String target;
   private String content;
+  private int like;
   private Date createAt;
 }
