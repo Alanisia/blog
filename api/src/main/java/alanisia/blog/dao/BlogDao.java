@@ -51,4 +51,6 @@ public interface BlogDao {
 
   @Select("select count(*) from blog where category_id = #{id}")
   int countOfCategory(@Param("id") int id);
+
+  List<Blog> search(String pattern);
 }

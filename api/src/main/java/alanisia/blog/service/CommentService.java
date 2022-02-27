@@ -1,5 +1,6 @@
 package alanisia.blog.service;
 
+import alanisia.blog.common.util.CacheUtil;
 import alanisia.blog.common.util.JsonUtil;
 import alanisia.blog.dao.AccountDao;
 import alanisia.blog.dao.CommentDao;
@@ -9,9 +10,6 @@ import alanisia.blog.vo.CommentVO;
 import alanisia.blog.vo.ReplyVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,55 +21,62 @@ public class CommentService {
   @Autowired private AccountDao accountDao;
   @Autowired private CommentDao commentDao;
 
-  @CachePut(value = "comments", key = "#id")
+  private static final String CACHE_COMMENT = "comments";
+  private static final String CACHE_REPLY = "replies";
+  private static final long CACHE_EXPIRE = 15 * 60 * 1000;
+
   public CommentDTO comment(CommentVO commentVO) {
     log.debug("Comment: {}", JsonUtil.json(commentVO));
-    Comment comment = new Comment().setBlogId(commentVO.getBlogId()).setLike(0)
-      .setAccountId(commentVO.getAccountId()).setContent(commentVO.getContent())
-      .setCommentId(0).setTargetId(0);
+    Comment comment = new Comment().setBlogId(commentVO.getBlogId()).setLike(0).setCommentId(0)
+      .setAccountId(commentVO.getAccountId()).setContent(commentVO.getContent()).setTargetId(0);
     commentDao.insert(comment);
-    return new CommentDTO().setId(comment.getId()).setAccountId(comment.getAccountId())
-      .setBlogId(comment.getBlogId()).setCommentId(0).setTargetId(0).setTarget("")
-      .setCommenter(accountDao.select(comment.getAccountId()).getUsername())
-      .setLike(comment.getLike()).setContent(comment.getContent())
+    CommentDTO commentDTO = new CommentDTO().setId(comment.getId()).setAccountId(comment.getAccountId())
+      .setBlogId(comment.getBlogId()).setCommentId(0).setTargetId(0).setTarget("").setLike(comment.getLike())
+      .setCommenter(accountDao.select(comment.getAccountId()).getUsername()).setContent(comment.getContent())
       .setCreateAt(comment.getCreateAt());
+
+    CacheUtil.put(CacheUtil.generateKey(CACHE_COMMENT, commentDTO.getBlogId() + "::" + commentDTO.getId()),
+      commentDTO, CACHE_EXPIRE);
+    return commentDTO;
   }
 
-  @CachePut(value = "replies", key = "#id")
   public CommentDTO reply(ReplyVO replyVO) {
     log.debug("Reply: {}", JsonUtil.json(replyVO));
     Comment reply = new Comment().setAccountId(replyVO.getAccountId()).setLike(0)
       .setBlogId(replyVO.getBlogId()).setCommentId(replyVO.getCommentId())
       .setTargetId(replyVO.getTargetId()).setContent(replyVO.getContent());
     commentDao.insert(reply);
-    return new CommentDTO().setId(reply.getId()).setAccountId(reply.getAccountId())
+    CommentDTO commentDTO = new CommentDTO().setId(reply.getId()).setAccountId(reply.getAccountId())
       .setBlogId(reply.getBlogId()).setCommentId(reply.getCommentId()).setLike(0)
       .setTargetId(reply.getTargetId()).setContent(reply.getContent())
       .setCommenter(accountDao.select(reply.getCommentId()).getUsername())
       .setTarget(accountDao.select(replyVO.getTargetId()).getUsername())
       .setCreateAt(reply.getCreateAt());
+    CacheUtil.put(CacheUtil.generateKey(CACHE_REPLY, commentDTO.getCommentId() + "::" + commentDTO.getId()),
+      commentDTO, CACHE_EXPIRE);
+    return commentDTO;
   }
 
-  // TODO: cache evict
-  @CacheEvict(value = "replies", key = "#commentId")
   public void removeComment(long commentId) {
-    commentDao.replies(commentId).forEach(r -> commentDao.delete(r.getId()));
+    commentDao.replies(commentId).forEach(r -> {
+      CacheUtil.remove(CacheUtil.generateKey(CACHE_REPLY, commentId + "::" + r.getId()));
+      commentDao.delete(r.getId());
+    });
     commentDao.delete(commentId);
+    // CacheUtil.remove(CacheUtil.generateKey(CACHE_COMMENT, ));
   }
 
-  // TODO: cache evict
-  @CacheEvict(value = "replies", key = "#replyId")
-  public void removeReply(long replyId) {
+  public boolean removeReply(long replyId) {
     commentDao.delete(replyId);
+    return true;
   }
 
-  // TODO: cache evict
-  @CacheEvict(value = "comments", key = "#blogId")
-  public void removeAll(long blogId) {
+  public List<Comment> removeAll(long blogId) {
+    List<Comment> comments = commentDao.comments(blogId);
     commentDao.deleteByBlogId(blogId);
+    return comments;
   }
 
-  @Cacheable(value = "comments", key = "#blogId")
   public List<CommentDTO> getComments(long blogId) {
     List<CommentDTO> comments = new ArrayList<>();
     commentDao.comments(blogId).forEach(c -> {
@@ -86,7 +91,6 @@ public class CommentService {
     return comments;
   }
 
-  @Cacheable(value = "replies", key = "#commentId")
   public List<CommentDTO> getReplies(long commentId) {
     List<CommentDTO> replies = new ArrayList<>();
     commentDao.replies(commentId).forEach(c -> {

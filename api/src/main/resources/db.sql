@@ -131,6 +131,16 @@ create table `comment`(
     key `key_blog_id`(`blog_id`)
 )engine=InnoDB default charset=utf8mb4;
 
+drop table if exists `comment_like`;
+create table `comment_like`(
+    `id` bigint not null auto_increment,
+    `account_id` bigint not null,
+    `comment_id` bigint not null,
+    `create_at` datetime not null default current_timestamp,
+    primary key(`id`),
+    key `key_comment_id`(`comment_id`)
+)engine=InnoDB default charset=utf8mb4;
+
 drop table if exists `message`;
 create table `message`(
   `id` bigint not null auto_increment,

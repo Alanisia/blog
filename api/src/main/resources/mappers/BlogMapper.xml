@@ -29,4 +29,7 @@
       limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
       order by update_at desc
   </select>
+  <select id="search" resultMap="BlogResultMap">
+    select * from blog where title like %#{pattern,jdbcType=VARCHAR}%
+  </select>
 </mapper>

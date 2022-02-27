@@ -35,12 +35,10 @@ export default {
   },
   methods: {
     search: function () {
-      axios.post('/search', {
-        'keyword': this.searchForm.keyword
-      }).then(res => {
+      axios.get(`/blog/search?keyword=${this.searchForm.keyword}`).then(res => {
         const data = res.data.data;
-        // TODO
-        console.debug(data);
+        // TODO: show data with blog list component
+        console.log(data);
       });
     },
     newArticle: function () {

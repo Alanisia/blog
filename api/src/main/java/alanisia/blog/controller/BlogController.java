@@ -2,14 +2,12 @@ package alanisia.blog.controller;
 
 import alanisia.blog.common.result.R;
 import alanisia.blog.service.BlogService;
-import alanisia.blog.vo.BlogVO;
 import alanisia.blog.vo.AccountIdAndBlogId;
+import alanisia.blog.vo.BlogVO;
 import alanisia.blog.vo.UpdateBlogVO;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/blog")
@@ -71,7 +69,7 @@ public class BlogController {
 
   @GetMapping("/search")
   public R search(String keyword) {
-    return R.ok();
+    return R.ok().setData(blogService.search(keyword));
   }
 
   @GetMapping("/category")

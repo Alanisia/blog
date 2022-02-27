@@ -3,7 +3,7 @@
     <p>{{ username }}</p>
     <p>{{ content }}</p>
     <p>
-      <i class="">{{ like }}</i>
+      <el-button type="mini">点赞 {{ like }}</el-button>
       <span>{{ time }}</span>
       <span @click="showReplies" v-if="replies > 0">
         展开全部{{ replies }}条回复

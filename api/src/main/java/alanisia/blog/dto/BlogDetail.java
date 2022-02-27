@@ -1,5 +1,6 @@
 package alanisia.blog.dto;
 
+import alanisia.blog.common.cache.CacheGetId;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -10,7 +11,7 @@ import java.util.Date;
 @Setter
 @Getter
 @Accessors(chain = true)
-public class BlogDetail implements Serializable {
+public class BlogDetail implements Serializable, CacheGetId {
   private static final long serialVersionUID = -2458539532341863531L;
   private long id;
   private String author;

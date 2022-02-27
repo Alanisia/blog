@@ -43,6 +43,7 @@ import CommonEditor from '../common/CommonEditor.vue';
 export default {
   name: "Editor",
   components: { Display, CommonEditor }, 
+  props: ["type"], // value = { UPDATE, CREATE }
   data() {
     return {
       categories: [],

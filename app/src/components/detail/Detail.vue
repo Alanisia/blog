@@ -13,6 +13,16 @@
       </span>
     </p>
     <h3>评论区（登录后方可参与评论）（共{{ blog.comments }}条评论）</h3>
+    <el-form :model="commentForm" ref="commentForm">
+      <el-form-item>
+        <common-editor ref="commentEditor" />
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="display">演示</el-button>
+        <el-button @click="comment" type="primary">发表评论</el-button>
+      </el-form-item>
+    </el-form>
+    <display :displayVisible="false" ref="displayDialog" />
   </el-main>
 </template>
 
@@ -20,7 +30,10 @@
 import { marked } from "marked";
 import axios from "axios";
 import util from "../../util";
+import CommonEditor from "../common/CommonEditor.vue";
+import Display from '../editor/Display.vue';
 export default {
+  components: { CommonEditor, Display },
   name: "Detail",
   data() {
     return {
@@ -38,6 +51,10 @@ export default {
         likes: 0,
         stars: 0,
       },
+      commentForm: {
+        mdText: "",
+        mdHtml: "",
+      },
     };
   },
   created() {
@@ -46,13 +63,21 @@ export default {
     this.insertHistory();
   },
   watch: {
-    'blog.content': function() {
+    "blog.content": function () {
       this.contentHTML = marked(this.blog.content);
+    },
+    "commentForm.mdText": function () {
+      this.commentForm.mdHtml = marked(this.commentForm.mdText);
     }
   },
   methods: {
+    display: function() {
+      this.commentForm.mdText = this.$refs.commentEditor.content;
+      this.$refs.displayDialog.mdText = this.commentForm.mdText;
+      this.$refs.displayDialog.displayVisible = true;
+    },
     loadBlog: function () {
-      axios.get(`/blog/${this.blog.id}`).then(res => {
+      axios.get(`/blog/${this.blog.id}`).then((res) => {
         const data = res.data.data;
         this.blog.id = data.id;
         this.blog.author = data.author;
@@ -160,13 +185,42 @@ export default {
           });
       }
     },
-    insertHistory: function() {
+    insertHistory: function () {
       axios.post("/history/insert", {
         accountId: util.getCurrentUser(),
-        blogId: this.blog.id
+        blogId: this.blog.id,
       });
     },
-    comment: function () {},
+    comment: function () {
+      axios
+        .post("/comment", {
+          accountId: util.getCurrentUser(),
+          blogId: this.blog.id,
+          content: this.commentForm.mdText,
+        })
+        .then((res) => {
+          const data = res.data;
+          if (!data.code) {
+            this.$message({
+              message: "评论成功！",
+              type: "success",
+            });
+          } else return new Error(`评论失败，错误码：${data.code}`);
+          //  else {
+          //   this.$message({
+          //     message: `评论失败，错误码：${data.code}`,
+          //     type: "error",
+          //   });
+          // }
+        }).then(() => {
+          this.loadComments();
+        }).catch(err => {
+          this.$message({
+            message: err,
+            type: "error"
+          });
+        });
+    },
   },
 };
 </script>

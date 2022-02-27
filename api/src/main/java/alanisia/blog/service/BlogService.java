@@ -4,6 +4,7 @@ import alanisia.blog.common.util.JsonUtil;
 import alanisia.blog.dao.AccountDao;
 import alanisia.blog.dao.BlogDao;
 import alanisia.blog.dao.CategoryDao;
+import alanisia.blog.dao.CommentDao;
 import alanisia.blog.dto.BlogDetail;
 import alanisia.blog.dto.BlogItem;
 import alanisia.blog.dto.BlogPagination;
@@ -14,6 +15,7 @@ import alanisia.blog.vo.AccountIdAndBlogId;
 import alanisia.blog.vo.UpdateBlogVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,7 @@ public class BlogService {
   @Autowired private AccountDao accountDao;
   @Autowired private CategoryDao categoryDao;
   @Autowired private BlogDao blogDao;
+  @Autowired private CommentDao commentDao;
 
   public void insertBlog(BlogVO vo) {
     log.debug("create blog: blog = {}", JsonUtil.json(vo));
@@ -124,5 +127,17 @@ public class BlogService {
       .setAuthor(account.getUsername()).setUpdateTime(blog.getUpdateAt()).setLikes(likes)
       .setCategory(categoryDao.category(blog.getCategoryId()).getName())
       .setContent(blog.getContent());
+  }
+
+  public List<BlogItem> search(String pattern) {
+    List<BlogItem> items = new ArrayList<>();
+    blogDao.search(pattern).forEach(b -> {
+      BlogItem item = new BlogItem().setId(b.getId()).setTitle(b.getTitle())
+        .setAuthor(accountDao.select(b.getAccountId()).getUsername())
+        .setCategory(categoryDao.category(b.getCategoryId()).getName())
+        .setLike(blogDao.likes(b.getId())).setStar(blogDao.stars(b.getId()));
+      items.add(item);
+    });
+    return items;
   }
 }
