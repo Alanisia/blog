@@ -3,8 +3,8 @@ package alanisia.blog.controller;
 import alanisia.blog.common.result.R;
 import alanisia.blog.service.CommentService;
 import alanisia.blog.vo.CommentVO;
+import alanisia.blog.vo.DeleteCommentVO;
 import alanisia.blog.vo.ReplyVO;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,24 +36,23 @@ public class CommentController {
   }
 
   @PostMapping("/comment/deleteAll")
-  public R deleteAllComments(long blogId) {
-    commentService.removeAll(blogId);
+  public R deleteAllComments(@RequestBody DeleteCommentVO deleteCommentVO) {
+    commentService.removeAll(deleteCommentVO);
     return R.ok();
   }
 
   @PostMapping("/comment/delete")
-  public R deleteComment(long commentId) {
-    commentService.removeComment(commentId);
+  public R deleteComment(@RequestBody DeleteCommentVO deleteCommentVO) {
+    commentService.removeComment(deleteCommentVO);
     return R.ok();
   }
 
   @PostMapping("/reply/delete")
-  public R deleteReply(long replyId) {
-    commentService.removeReply(replyId);
+  public R deleteReply(@RequestBody DeleteCommentVO deleteCommentVO) {
+    commentService.removeReply(deleteCommentVO);
     return R.ok();
   }
 
-  // TODO: have not decided if use this method to update likes
   @PostMapping("/comment/like")
   public R like(long commentId) {
     return R.ok();

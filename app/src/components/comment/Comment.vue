@@ -15,13 +15,14 @@
 <script>
 export default {
   name: "Comment",
+  props: ['comment'],
   data() {
     return {
-      username: "",
-      content: "",
-      like: 0,
-      time: "",
-      id: 0,
+      username: comment.commenter,
+      content: comment.content,
+      like: comment.like,
+      time: comment.createAt,
+      id: comment.id,
       replies: 0,
     };
   },

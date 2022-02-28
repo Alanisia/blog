@@ -31,6 +31,7 @@ const routes = [
       {path: '/draft', component: Draft},
     ]},
     {path: '/detail/:id', component: Detail},
+    {path: '/404', component: Page404},
     {path: '/editor', component: Editor},
     {path: '/', component: Index, children: [
       {path: '/', component: Newest},
@@ -38,8 +39,7 @@ const routes = [
     ]},
   ]},
   {path: '/login', component: Login},
-  {path: '/register', component: Register},
-  {path: '/404', component: Page404}
+  {path: '/register', component: Register}
 ];
 
 const router = new VueRouter({routes});

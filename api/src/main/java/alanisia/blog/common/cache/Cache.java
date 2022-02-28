@@ -2,6 +2,7 @@ package alanisia.blog.common.cache;
 
 import java.lang.annotation.*;
 
+@Deprecated
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

@@ -82,7 +82,7 @@ public class AccountService {
   public String signToken(Account account) {
     String subject = String.valueOf(account.getId());
     String token = JwtUtil.sign(subject);
-    redisTemplate.opsForValue().set(String.valueOf(account.getId()), token, 30, TimeUnit.MINUTES);
+    redisTemplate.opsForValue().set(String.valueOf(account.getId()), token, 3, TimeUnit.MINUTES);
     return token;
   }
 

@@ -138,7 +138,8 @@ create table `comment_like`(
     `comment_id` bigint not null,
     `create_at` datetime not null default current_timestamp,
     primary key(`id`),
-    key `key_comment_id`(`comment_id`)
+    key `key_comment_id`(`comment_id`),
+    key `key_account_id_comment_id`(account_id, comment_id)
 )engine=InnoDB default charset=utf8mb4;
 
 drop table if exists `message`;

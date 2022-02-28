@@ -13,6 +13,7 @@
       </span>
     </p>
     <h3>评论区（登录后方可参与评论）（共{{ blog.comments }}条评论）</h3>
+    <comment v-for="comment in comments" :comment="comment" :key="comment.id" />
     <el-form :model="commentForm" ref="commentForm">
       <el-form-item>
         <common-editor ref="commentEditor" />
@@ -31,7 +32,7 @@ import { marked } from "marked";
 import axios from "axios";
 import util from "../../util";
 import CommonEditor from "../common/CommonEditor.vue";
-import Display from '../editor/Display.vue';
+import Display from "../editor/Display.vue";
 export default {
   components: { CommonEditor, Display },
   name: "Detail",
@@ -55,6 +56,7 @@ export default {
         mdText: "",
         mdHtml: "",
       },
+      comments: [],
     };
   },
   created() {
@@ -68,10 +70,10 @@ export default {
     },
     "commentForm.mdText": function () {
       this.commentForm.mdHtml = marked(this.commentForm.mdText);
-    }
+    },
   },
   methods: {
-    display: function() {
+    display: function () {
       this.commentForm.mdText = this.$refs.commentEditor.content;
       this.$refs.displayDialog.mdText = this.commentForm.mdText;
       this.$refs.displayDialog.displayVisible = true;
@@ -79,18 +81,27 @@ export default {
     loadBlog: function () {
       axios.get(`/blog/${this.blog.id}`).then((res) => {
         const data = res.data.data;
-        this.blog.id = data.id;
-        this.blog.author = data.author;
-        this.blog.title = data.title;
-        this.blog.category = data.category;
-        this.blog.content = data.content;
-        this.blog.comments = data.comments;
-        this.blog.stars = data.stars;
-        this.blog.likes = data.likes;
-        this.blog.updateTime = data.updateTime;
+        if (data === null) {
+          this.$router.push("/404");
+        } else {
+          this.blog.id = data.id;
+          this.blog.author = data.author;
+          this.blog.title = data.title;
+          this.blog.category = data.category;
+          this.blog.content = data.content;
+          this.blog.comments = data.comments;
+          this.blog.stars = data.stars;
+          this.blog.likes = data.likes;
+          this.blog.updateTime = data.updateTime;
+        }
       });
     },
-    loadComments: function () {},
+    loadComments: function () {
+      axios.get(`/comments?blogId=${this.blog.id}`).then((res) => {
+        const data = res.data.data;
+        this.comments = data;
+      });
+    },
     star: function () {
       if (!this.haveStarred) {
         axios
@@ -101,6 +112,7 @@ export default {
           .then((res) => {
             const data = res.data;
             if (!data.code) {
+              // TODO
               this.blog.stars++;
               this.$message({
                 message: "收藏成功！",
@@ -123,6 +135,7 @@ export default {
           .then((res) => {
             const data = res.data;
             if (!data.code) {
+              // TODO
               this.blog.stars--;
               this.$message({
                 message: "取消收藏成功！",
@@ -148,6 +161,7 @@ export default {
           .then((res) => {
             const data = res.data;
             if (!data.code) {
+              // TODO
               this.blog.likes++;
               this.$message({
                 message: "点赞成功！",
@@ -170,6 +184,7 @@ export default {
           .then((res) => {
             const data = res.data;
             if (!data.code) {
+              // TODO
               this.blog.likes--;
               this.$message({
                 message: "取消点赞成功！",
@@ -212,12 +227,14 @@ export default {
           //     type: "error",
           //   });
           // }
-        }).then(() => {
+        })
+        .then(() => {
           this.loadComments();
-        }).catch(err => {
+        })
+        .catch((err) => {
           this.$message({
             message: err,
-            type: "error"
+            type: "error",
           });
         });
     },

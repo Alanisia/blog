@@ -7,9 +7,8 @@ import java.util.List;
 
 @Mapper
 public interface CommentDao {
-  @Insert("insert into comment(`account_id`, `blog_Id`, `comment_id`, `target_id`, `content`, `like`) " +
-    "values(#{comment.accountId}, #{comment.blogId}, #{comment.commentId}, #{comment.targetId}, " +
-    "#{comment.content}, #{comment.like})")
+  @Insert("insert into comment(`account_id`, `blog_Id`, `comment_id`, `target_id`, `content`) " +
+    "values(#{comment.accountId}, #{comment.blogId}, #{comment.commentId}, #{comment.targetId}, #{comment.content})")
   @SelectKey(before = false, keyColumn = "id", keyProperty = "id", resultType = Long.class,
     statement = "select last_insert_id()")
   void insert(@Param("comment") Comment comment);
@@ -20,9 +19,14 @@ public interface CommentDao {
   @Delete("delete from comment where blog_id = #{blogId}")
   void deleteByBlogId(@Param("blogId") long blogId);
 
-  // TODO: have not decided if use this method to update likes
-  @Update("update comment set like = like + 1 where id = #{id}")
-  void like(@Param("id") long id);
+  @Insert("insert into comment_like(`account_id`, `comment_id`) values(#{accountId}, #{commentId})")
+  void like(@Param("accountId") long accountId, @Param("commentId") long commentId);
+
+  @Delete("delete from comment_like where `account_id` = #{accountId} and `comment_id` = #{commentId}")
+  void cancelLike(@Param("accountId") long accountId, @Param("commentId") long commentId);
+
+  @Select("select count(*) from comment_like where `account_id` = #{accountId} and `comment_id` = #{commentId}")
+  int likes(@Param("accountId") long accountId, @Param("commentId") long commentId);
 
   @Select("select * from comment where blog_id = #{blogId}")
   List<Comment> comments(@Param("blogId") long blogId);

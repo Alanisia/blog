@@ -14,8 +14,9 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 
 @Slf4j
-@Aspect
-@Component
+@Deprecated
+//@Aspect
+//@Component
 public class CacheAspect {
   @Pointcut("@annotation(alanisia.blog.common.cache.Cache)")
   public void cache() {}

@@ -13,7 +13,6 @@ public class Comment {
   private long targetId;
   private long accountId;
   private long blogId;
-  private int like;
   private String content;
   private Date createAt;
 }

@@ -50,8 +50,6 @@ public class UserService {
     }
   }
 
-  // TODO: put into cache after inserting into database
-  // @CachePut(value = "user_history", key = "#id")
   public boolean insertHistory(long id, long blogId) {
     log.debug("insert history: id = {}, blogId = {}", id, blogId);
     if (userDao.historyExists(id, blogId) > 0) return false;
@@ -85,22 +83,7 @@ public class UserService {
     log.debug("blog history: id = {}", id);
     List<BlogHistory> histories = userDao.history(id);
     List<BlogItem> items = new ArrayList<>();
-    histories.forEach(b -> {
-      long blogId = b.getBlogId();
-      long accountId = b.getAccountId();
-      Blog blog = blogDao.select(blogId);
-      Category category = categoryDao.category(blog.getCategoryId());
-      Account account = accountDao.select(accountId);
-      BlogItem item = new BlogItem()
-        .setId(blog.getId())
-        .setAuthor(account.getUsername())
-        .setCategory(category.getName())
-        .setTitle(blog.getTitle())
-        .setLike(blogDao.likes(blog.getId()))
-        .setStar(blogDao.stars(blog.getId()))
-        .setUpdateAt(blog.getUpdateAt());
-      items.add(item);
-    });
+    histories.forEach(b -> items.add(item(b)));
     return items;
   }
 
@@ -109,22 +92,7 @@ public class UserService {
     log.debug("blog starred by user: id = {}", id);
     List<StarBlog> starBlogs = userDao.star(id);
     List<BlogItem> items = new ArrayList<>();
-    starBlogs.forEach(b -> {
-      long blogId = b.getBlogId();
-      long accountId = b.getAccountId();
-      Blog blog = blogDao.select(blogId);
-      Category category = categoryDao.category(blog.getCategoryId());
-      Account account = accountDao.select(accountId);
-      BlogItem item = new BlogItem()
-        .setId(blog.getId())
-        .setAuthor(account.getUsername())
-        .setCategory(category.getName())
-        .setTitle(blog.getTitle())
-        .setLike(blogDao.likes(blog.getId()))
-        .setStar(blogDao.stars(blog.getId()))
-        .setUpdateAt(blog.getUpdateAt());
-      items.add(item);
-    });
+    starBlogs.forEach(b -> items.add(item(b)));
     return items;
   }
 
@@ -133,22 +101,7 @@ public class UserService {
     log.debug("blog published: id = {}", id);
     List<Blog> blogs = userDao.publish(id);
     List<BlogItem> items = new ArrayList<>();
-    blogs.forEach(b -> {
-      long blogId = b.getId();
-      long accountId = b.getAccountId();
-      Blog blog = blogDao.select(blogId);
-      Category category = categoryDao.category(blog.getCategoryId());
-      Account account = accountDao.select(accountId);
-      BlogItem item = new BlogItem()
-        .setId(blog.getId())
-        .setAuthor(account.getUsername())
-        .setCategory(category.getName())
-        .setTitle(blog.getTitle())
-        .setLike(blogDao.likes(blog.getId()))
-        .setStar(blogDao.stars(blog.getId()))
-        .setUpdateAt(blog.getUpdateAt());
-      items.add(item);
-    });
+    blogs.forEach(b -> items.add(item(b)));
     return items;
   }
 
@@ -157,22 +110,7 @@ public class UserService {
     log.debug("blog saved as draft: id = {}", id);
     List<Blog> blogs = userDao.draft(id);
     List<BlogItem> items = new ArrayList<>();
-    blogs.forEach(b -> {
-      long blogId = b.getId();
-      long accountId = b.getAccountId();
-      Blog blog = blogDao.select(blogId);
-      Category category = categoryDao.category(blog.getCategoryId());
-      Account account = accountDao.select(accountId);
-      BlogItem item = new BlogItem()
-        .setId(blog.getId())
-        .setAuthor(account.getUsername())
-        .setCategory(category.getName())
-        .setTitle(blog.getTitle())
-        .setLike(blogDao.likes(blog.getId()))
-        .setStar(blogDao.stars(blog.getId()))
-        .setUpdateAt(blog.getUpdateAt());
-      items.add(item);
-    });
+    blogs.forEach(b -> items.add(item(b)));
     return items;
   }
 
@@ -198,5 +136,26 @@ public class UserService {
   public int stars(long id) {
     log.debug("count of starred: id = {}", id);
     return userDao.starCount(id);
+  }
+
+  public interface GetBlogId {
+    long getBlogId();
+    long getAccountId();
+  }
+
+  private BlogItem item(GetBlogId b) {
+    long blogId = b.getBlogId();
+    long accountId = b.getAccountId();
+    Blog blog = blogDao.select(blogId);
+    Category category = categoryDao.category(blog.getCategoryId());
+    Account account = accountDao.select(accountId);
+    return new BlogItem()
+      .setId(blog.getId())
+      .setAuthor(account.getUsername())
+      .setCategory(category.getName())
+      .setTitle(blog.getTitle())
+      .setLike(blogDao.likes(blog.getId()))
+      .setStar(blogDao.stars(blog.getId()))
+      .setUpdateAt(blog.getUpdateAt());
   }
 }

@@ -27,4 +27,16 @@ export default {
     "TOKEN_EXPIRED": 15,
     "NO_PERMISSION": 16
   },
+  success: msg => {
+    return {
+      message: msg,
+      type: "success"
+    }
+  },
+  error: msg => {
+    return {
+      message: msg,
+      type: "error"
+    }
+  }
 }

@@ -1,6 +1,6 @@
 package alanisia.blog.common.cache;
 
-//@Deprecated
+@Deprecated
 public interface CacheGetId {
   long getId();
 }
