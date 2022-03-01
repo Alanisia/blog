@@ -125,7 +125,6 @@ create table `comment`(
     `target_id` bigint not null,
     `blog_id` bigint not null,
     `content` text not null,
-    `like` int not null,
     `create_at` datetime not null default current_timestamp,
     primary key(`id`),
     key `key_blog_id`(`blog_id`)

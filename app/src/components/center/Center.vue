@@ -10,7 +10,7 @@
           <el-menu-item index="mine">我发布的博文</el-menu-item>
           <el-menu-item index="draft">博文草稿箱</el-menu-item>
         </el-submenu>
-        <el-menu-item index="message">消息管理</el-menu-item>
+        <el-menu-item index="comment">评论管理</el-menu-item>
       </el-menu>
     </el-aside>
     <el-main>

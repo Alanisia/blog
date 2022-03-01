@@ -8,6 +8,7 @@ import alanisia.blog.dao.CommentDao;
 import alanisia.blog.dto.BlogDetail;
 import alanisia.blog.dto.BlogItem;
 import alanisia.blog.dto.BlogPagination;
+import alanisia.blog.dto.StarredOrLiked;
 import alanisia.blog.model.Account;
 import alanisia.blog.model.Blog;
 import alanisia.blog.vo.AccountIdAndBlogId;
@@ -15,6 +16,7 @@ import alanisia.blog.vo.BlogVO;
 import alanisia.blog.vo.UpdateBlogVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,7 @@ public class BlogService {
   @Autowired private CategoryDao categoryDao;
   @Autowired private CommentDao commentDao;
 
+  @CacheEvict(cacheNames = "newest", beforeInvocation = true)
   public void insertBlog(BlogVO vo) {
     log.debug("create blog: blog = {}", JsonUtil.json(vo));
     Blog blog = new Blog().setAccountId(vo.getAuthorId()).setCategoryId(vo.getCategory().getId())
@@ -67,6 +70,11 @@ public class BlogService {
   public void cancelLike(AccountIdAndBlogId accountIdAndBlogId) {
     log.debug("cancel like = {}", JsonUtil.json(accountIdAndBlogId));
     blogDao.cancelLike(accountIdAndBlogId.getAccountId(), accountIdAndBlogId.getBlogId());
+  }
+
+  public StarredOrLiked starredOrLiked(long accountId, long blogId) {
+    return new StarredOrLiked().setHaveLiked(blogDao.ifStars(accountId, blogId) > 0)
+      .setHaveLiked(blogDao.ifLikes(accountId, blogId) > 0);
   }
 
   @Cacheable(cacheNames = "newest")

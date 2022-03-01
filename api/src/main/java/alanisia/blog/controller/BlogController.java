@@ -81,4 +81,9 @@ public class BlogController {
   public R details(@PathVariable("id") long id) {
     return R.ok().setData(blogService.detail(id));
   }
+
+  @GetMapping("/starredOrLiked")
+  public R starredOrLiked(long accountId, long blogId) {
+    return R.ok().setData(blogService.starredOrLiked(accountId, blogId));
+  }
 }

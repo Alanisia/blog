@@ -1,8 +1,11 @@
 <template>
   <el-dialog>
     <el-form :model="replyForm" :rules="rules">
-      <el-form-item>
+      <el-form-item prop="reply">
         <el-input
+          type="textarea"
+          maxlength="500"
+          minlength="1"
           v-model="replyForm.content"
           placeholder="请输入回复内容"
         ></el-input>
@@ -24,7 +27,17 @@ export default {
       replyForm: {
         content: "",
       },
-      rules: {},
+      rules: {
+        reply: [
+          {
+            validator: (rule, value, callback) => {
+              if ("" === value) callback(new Error("请输入回复！"));
+              else callback();
+            },
+            trigger: "blur",
+          },
+        ],
+      },
     };
   },
   methods: {

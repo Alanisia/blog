@@ -47,7 +47,7 @@ export default {
     handleDelete: function (id) {
       const accountId = util.getCurrentUser();
       const type = this.$props.type;
-      let requestURL = `/remove/${type}/${id}`;
+      let requestURL = `/remove/${util.getCurrentUser()}/${type}/${id}`;
       axios
         .post(requestURL, {
           id: accountId,
@@ -57,15 +57,10 @@ export default {
         .then((res) => {
           const data = res.data;
           if (!data.code) {
-            this.$message({
-              message: "删除成功！",
-              type: "success",
-            });
+            this.$message(util.success("删除成功！"));
+            // this.$forceUpdate();
           } else {
-            this.$message({
-              message: "删除失败",
-              type: "error",
-            });
+            this.$message(util.error("删除失败！"));
           }
         });
     },

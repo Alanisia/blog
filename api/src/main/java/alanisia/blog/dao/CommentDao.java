@@ -28,14 +28,12 @@ public interface CommentDao {
   @Select("select count(*) from comment_like where `account_id` = #{accountId} and `comment_id` = #{commentId}")
   int likes(@Param("accountId") long accountId, @Param("commentId") long commentId);
 
-  @Select("select * from comment where blog_id = #{blogId}")
   List<Comment> comments(@Param("blogId") long blogId);
 
   // TODO: replies whether to be counted haven't decided yet
   @Select("select count(*) from comment where blog_id = #{blogId}")
   int commentCount(@Param("blogId") long blogId);
 
-  @Select("select * from comment where comment_id = #{commentId}")
   List<Comment> replies(@Param("commentId") long commentId);
 
   @Select("select blog_id where comment_id = #{commentId}")

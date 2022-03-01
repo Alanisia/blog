@@ -13,7 +13,7 @@ import History from '@/components/center/blog/History';
 import Star from '@/components/center/blog/Star';
 import Mine from '@/components/center/blog/Mine';
 import Draft from '@/components/center/blog/Draft';
-import Message from '@/components/center/message/Message';
+import Comment from '@/components/center/comment/Comment';
 import Login from '@/components/account/Login';
 import Register from '@/components/account/Register';
 import Page404 from '@/components/Page404';
@@ -24,7 +24,7 @@ const routes = [
   {path: '/', component: Main, children: [
     {path: '/center', component: Center, children: [
       {path: '/info', component: Info},
-      {path: '/message', component: Message},
+      {path: '/comment', component: Comment},
       {path: '/history', component: History},
       {path: '/star', component: Star},
       {path: '/mine', component: Mine},

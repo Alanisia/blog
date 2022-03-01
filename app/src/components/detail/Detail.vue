@@ -4,18 +4,19 @@
     <legend style="text-align: center">分类：{{ blog.category }}</legend>
     <div v-html="contentHTML"></div>
     <p>
-      更新时间：{{ blog.updateTime }}
+      <span>更新时间：{{ blog.updateTime }}</span>
       <span style="float: right">
-        <el-button icon="el-icon-star-off" @click="star"
-          >收藏 {{ blog.stars }}</el-button
-        >
+        <el-button icon="el-icon-star-off" @click="star">
+          收藏 {{ blog.stars }}
+        </el-button>
         <el-button icon="" @click="like">点赞 {{ blog.likes }}</el-button>
       </span>
     </p>
     <h3>评论区（登录后方可参与评论）（共{{ blog.comments }}条评论）</h3>
     <comment v-for="comment in comments" :comment="comment" :key="comment.id" />
-    <el-form :model="commentForm" ref="commentForm">
-      <el-form-item>
+    <h4>Markdown编辑器</h4>
+    <el-form :model="commentForm" ref="commentForm" :rules="rules">
+      <el-form-item prop="comment">
         <common-editor ref="commentEditor" />
       </el-form-item>
       <el-form-item>
@@ -33,8 +34,9 @@ import axios from "axios";
 import util from "../../util";
 import CommonEditor from "../common/CommonEditor.vue";
 import Display from "../editor/Display.vue";
+import Comment from "../comment/Comment.vue";
 export default {
-  components: { CommonEditor, Display },
+  components: { CommonEditor, Display, Comment },
   name: "Detail",
   data() {
     return {
@@ -55,6 +57,17 @@ export default {
       commentForm: {
         mdText: "",
         mdHtml: "",
+      },
+      rules: {
+        comment: [
+          {
+            validator: (rule, value, callback) => {
+              if ("" === value) callback(new Error("请输入评论！"));
+              else callback();
+            },
+            trigger: "blur",
+          },
+        ],
       },
       comments: [],
     };
@@ -96,6 +109,19 @@ export default {
         }
       });
     },
+    loadStarredOrLiked: function () {
+      axios
+        .get(
+          `/starredOrLiked?accountId=${util.getCurrentUser()}&blogId=${
+            this.blog.id
+          }`
+        )
+        .then((res) => {
+          const data = res.data.data;
+          this.haveStarred = data.haveStarred;
+          this.haveLiked = data.haveLiked;
+        });
+    },
     loadComments: function () {
       axios.get(`/comments?blogId=${this.blog.id}`).then((res) => {
         const data = res.data.data;
@@ -114,17 +140,9 @@ export default {
             if (!data.code) {
               // TODO
               this.blog.stars++;
-              this.$message({
-                message: "收藏成功！",
-                type: "success",
-              });
+              this.$message(util.success("收藏成功！"));
               this.haveStarred = true;
-            } else {
-              this.$message({
-                message: "收藏失败！",
-                type: "error",
-              });
-            }
+            } else this.$message(util.error("收藏失败！"));
           });
       } else {
         axios
@@ -137,17 +155,9 @@ export default {
             if (!data.code) {
               // TODO
               this.blog.stars--;
-              this.$message({
-                message: "取消收藏成功！",
-                type: "success",
-              });
+              this.$message(util.success("取消收藏成功！"));
               this.haveStarred = false;
-            } else {
-              this.$message({
-                message: "取消收藏失败！",
-                type: "error",
-              });
-            }
+            } else this.$message(util.error("取消收藏失败！"));
           });
       }
     },
@@ -163,17 +173,9 @@ export default {
             if (!data.code) {
               // TODO
               this.blog.likes++;
-              this.$message({
-                message: "点赞成功！",
-                type: "success",
-              });
+              this.$message(util.success("点赞成功！"));
               this.haveliked = true;
-            } else {
-              this.$message({
-                message: "点赞失败！",
-                type: "error",
-              });
-            }
+            } else this.$message(util.error("点赞失败!"));
           });
       } else {
         axios
@@ -186,17 +188,9 @@ export default {
             if (!data.code) {
               // TODO
               this.blog.likes--;
-              this.$message({
-                message: "取消点赞成功！",
-                type: "success",
-              });
+              this.$message(util.success("取消点赞成功！"));
               this.haveliked = false;
-            } else {
-              this.$message({
-                message: "取消点赞失败！",
-                type: "error",
-              });
-            }
+            } else this.$message(util.error("取消点赞失败！"));
           });
       }
     },
@@ -216,26 +210,14 @@ export default {
         .then((res) => {
           const data = res.data;
           if (!data.code) {
-            this.$message({
-              message: "评论成功！",
-              type: "success",
-            });
+            this.$message(util.success("评论成功！"));
           } else return new Error(`评论失败，错误码：${data.code}`);
-          //  else {
-          //   this.$message({
-          //     message: `评论失败，错误码：${data.code}`,
-          //     type: "error",
-          //   });
-          // }
         })
         .then(() => {
           this.loadComments();
         })
         .catch((err) => {
-          this.$message({
-            message: err,
-            type: "error",
-          });
+          this.$message(util.error(err));
         });
     },
   },

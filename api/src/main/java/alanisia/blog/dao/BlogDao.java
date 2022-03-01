@@ -29,6 +29,9 @@ public interface BlogDao {
   @Select("select count(*) from star_blog where blog_id = #{id}")
   int stars(@Param("id") long id);
 
+  @Select("select count(*) from star_blog where account_id = #{accountId} and blog_id = #{blogId}")
+  int ifStars(@Param("accountId") long accountId, @Param("blogId") long blogId);
+
   @Insert("insert into like_blog(`account_id`, `blog_id`) values(#{accountId}, #{blogId})")
   void like(@Param("accountId") long accountId, @Param("blogId") long blogId);
 
@@ -37,6 +40,9 @@ public interface BlogDao {
 
   @Select("select count(*) from like_blog where blog_id = #{id}")
   int likes(@Param("id") long id);
+
+  @Select("select count(*) from like_blog where account_id = #{accountId} and blog_id = #{blogId}")
+  int ifLikes(@Param("accountId") long accountId, @Param("blogId") long blogId);
 
   Blog select(long id);
 

@@ -1,9 +1,11 @@
 package alanisia.blog.service;
 
+import alanisia.blog.common.enums.Result;
 import alanisia.blog.common.util.JsonUtil;
 import alanisia.blog.dao.AccountDao;
 import alanisia.blog.dao.CommentDao;
 import alanisia.blog.dto.CommentDTO;
+import alanisia.blog.exception.BusinessException;
 import alanisia.blog.model.Comment;
 import alanisia.blog.vo.CommentVO;
 import alanisia.blog.vo.DeleteCommentVO;
@@ -27,6 +29,7 @@ public class CommentService {
   @CacheEvict(cacheNames = "comments", key = "#commentVO.blogId", beforeInvocation = true)
   public void comment(CommentVO commentVO) {
     log.debug("Comment: {}", JsonUtil.json(commentVO));
+    if (commentVO.getContent().length() == 0) throw new BusinessException(Result.NULL_EXCEPTION);
     Comment comment = new Comment().setBlogId(commentVO.getBlogId()).setCommentId(0)
       .setAccountId(commentVO.getAccountId()).setContent(commentVO.getContent()).setTargetId(0);
     commentDao.insert(comment);
@@ -35,6 +38,7 @@ public class CommentService {
   @CacheEvict(cacheNames = "replies", key = "#commentVO.commentId", beforeInvocation = true)
   public void reply(ReplyVO replyVO) {
     log.debug("Reply: {}", JsonUtil.json(replyVO));
+    if (replyVO.getContent().length() == 0) throw new BusinessException(Result.NULL_EXCEPTION);
     Comment reply = new Comment().setAccountId(replyVO.getAccountId())
       .setBlogId(replyVO.getBlogId()).setCommentId(replyVO.getCommentId())
       .setTargetId(replyVO.getTargetId()).setContent(replyVO.getContent());
