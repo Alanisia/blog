@@ -15,8 +15,8 @@
     <h3>评论区（登录后方可参与评论）（共{{ blog.comments }}条评论）</h3>
     <comment v-for="comment in comments" :comment="comment" :key="comment.id" />
     <h4>Markdown编辑器</h4>
-    <el-form :model="commentForm" ref="commentForm" :rules="rules">
-      <el-form-item prop="comment">
+    <el-form :model="commentForm" ref="commentForm">
+      <el-form-item>
         <common-editor ref="commentEditor" />
       </el-form-item>
       <el-form-item>
@@ -58,22 +58,12 @@ export default {
         mdText: "",
         mdHtml: "",
       },
-      rules: {
-        comment: [
-          {
-            validator: (rule, value, callback) => {
-              if ("" === value) callback(new Error("请输入评论！"));
-              else callback();
-            },
-            trigger: "blur",
-          },
-        ],
-      },
       comments: [],
     };
   },
   created() {
     this.loadBlog();
+    this.loadStarredOrLiked();
     this.loadComments();
     this.insertHistory();
   },
@@ -92,7 +82,7 @@ export default {
       this.$refs.displayDialog.displayVisible = true;
     },
     loadBlog: function () {
-      axios.get(`/blog/${this.blog.id}`).then((res) => {
+      axios.get(`/blog/detail/${this.blog.id}`).then((res) => {
         const data = res.data.data;
         if (data === null) {
           this.$router.push("/404");
@@ -110,17 +100,18 @@ export default {
       });
     },
     loadStarredOrLiked: function () {
-      axios
-        .get(
-          `/starredOrLiked?accountId=${util.getCurrentUser()}&blogId=${
-            this.blog.id
-          }`
-        )
-        .then((res) => {
-          const data = res.data.data;
-          this.haveStarred = data.haveStarred;
-          this.haveLiked = data.haveLiked;
-        });
+      if (util.getToken() !== null)
+        axios
+          .get(
+            `/blog/starredOrLiked?accountId=${util.getCurrentUser()}&blogId=${
+              this.blog.id
+            }`
+          )
+          .then((res) => {
+            const data = res.data.data;
+            this.haveStarred = data.haveStarred;
+            this.haveLiked = data.haveLiked;
+          });
     },
     loadComments: function () {
       axios.get(`/comments?blogId=${this.blog.id}`).then((res) => {
@@ -129,96 +120,128 @@ export default {
       });
     },
     star: function () {
-      if (!this.haveStarred) {
-        axios
-          .post("/blog/star", {
-            accountId: util.getCurrentUser(),
-            blogId: this.blog.id,
-          })
-          .then((res) => {
-            const data = res.data;
-            if (!data.code) {
-              // TODO
-              this.blog.stars++;
-              this.$message(util.success("收藏成功！"));
-              this.haveStarred = true;
-            } else this.$message(util.error("收藏失败！"));
-          });
+      if (util.getToken() === null) {
+        this.$message(util.error("未登录，请先登录"));
+        this.$router.push("/login");
       } else {
-        axios
-          .post("/blog/star/cancel", {
-            accountId: util.getCurrentUser(),
-            blogId: this.blog.id,
-          })
-          .then((res) => {
-            const data = res.data;
-            if (!data.code) {
-              // TODO
-              this.blog.stars--;
-              this.$message(util.success("取消收藏成功！"));
-              this.haveStarred = false;
-            } else this.$message(util.error("取消收藏失败！"));
-          });
+        if (!this.haveStarred) {
+          axios
+            .post("/blog/star", {
+              accountId: util.getCurrentUser(),
+              blogId: this.blog.id,
+            })
+            .then((res) => {
+              const data = res.data;
+              if (!data.code) {
+                this.blog.stars++;
+                this.$message(util.success("收藏成功！"));
+                this.haveStarred = true;
+              } else if (data.code === util.result.AUTHORIZE_FAILED) {
+                this.$message(util.error("令牌已过期，请重新登录"));
+                this.$router.push("/login");
+              } else this.$message(util.error("收藏失败！"));
+            });
+        } else {
+          axios
+            .post("/blog/star/cancel", {
+              accountId: util.getCurrentUser(),
+              blogId: this.blog.id,
+            })
+            .then((res) => {
+              const data = res.data;
+              if (!data.code) {
+                this.blog.stars--;
+                this.$message(util.success("取消收藏成功！"));
+                this.haveStarred = false;
+              } else if (data.code === util.result.AUTHORIZE_FAILED) {
+                this.$message(util.error("令牌已过期，请重新登录"));
+                this.$router.push("/login");
+              } else this.$message(util.error("取消收藏失败！"));
+            });
+        }
       }
     },
     like: function () {
-      if (!this.haveliked) {
-        axios
-          .post("/blog/like", {
-            accountId: util.getCurrentUser(),
-            blogId: this.blog.id,
-          })
-          .then((res) => {
-            const data = res.data;
-            if (!data.code) {
-              // TODO
-              this.blog.likes++;
-              this.$message(util.success("点赞成功！"));
-              this.haveliked = true;
-            } else this.$message(util.error("点赞失败!"));
-          });
+      if (util.getToken() === null) {
+        this.$message(util.error("未登录，请先登录"));
+        this.$router.push("/login");
       } else {
-        axios
-          .post("/blog/like/cancel", {
-            accountId: util.getCurrentUser(),
-            blogId: this.blog.id,
-          })
-          .then((res) => {
-            const data = res.data;
-            if (!data.code) {
-              // TODO
-              this.blog.likes--;
-              this.$message(util.success("取消点赞成功！"));
-              this.haveliked = false;
-            } else this.$message(util.error("取消点赞失败！"));
-          });
+        if (!this.haveliked) {
+          axios
+            .post("/blog/like", {
+              accountId: util.getCurrentUser(),
+              blogId: this.blog.id,
+            })
+            .then((res) => {
+              const data = res.data;
+              if (!data.code) {
+                this.blog.likes++;
+                this.$message(util.success("点赞成功！"));
+                this.haveliked = true;
+              } else if (data.code === util.result.AUTHORIZE_FAILED) {
+                this.$message(util.error("令牌已过期，请重新登录"));
+                this.$router.push("/login");
+              } else this.$message(util.error("点赞失败!"));
+            });
+        } else {
+          axios
+            .post("/blog/like/cancel", {
+              accountId: util.getCurrentUser(),
+              blogId: this.blog.id,
+            })
+            .then((res) => {
+              const data = res.data;
+              if (!data.code) {
+                this.blog.likes--;
+                this.$message(util.success("取消点赞成功！"));
+                this.haveliked = false;
+              } else if (data.code === util.result.AUTHORIZE_FAILED) {
+                this.$message(util.error("令牌已过期，请重新登录"));
+                this.$router.push("/login");
+              } else this.$message(util.error("取消点赞失败！"));
+            });
+        }
       }
     },
     insertHistory: function () {
-      axios.post("/history/insert", {
-        accountId: util.getCurrentUser(),
-        blogId: this.blog.id,
-      });
-    },
-    comment: function () {
-      axios
-        .post("/comment", {
+      if (util.getToken() !== null) {
+        axios.post("/history/insert", {
           accountId: util.getCurrentUser(),
           blogId: this.blog.id,
-          content: this.commentForm.mdText,
-        })
-        .then((res) => {
-          const data = res.data;
-          if (!data.code) {
-            this.$message(util.success("评论成功！"));
-          } else return new Error(`评论失败，错误码：${data.code}`);
-        })
-        .then(() => {
-          this.loadComments();
-        })
-        .catch((err) => {
-          this.$message(util.error(err));
         });
+      }
+    },
+    comment: function () {
+      if (util.getToken() === null) {
+        this.$message(util.error("未登录，请先登录"));
+        this.$router.push("/login");
+      } else {
+        const content = this.commentForm.mdText;
+        if (content === "") this.$message(util.error("评论不能为空！"));
+        else {
+          axios
+            .post("/comment", {
+              accountId: util.getCurrentUser(),
+              blogId: this.blog.id,
+              content: content,
+            })
+            .then((res) => {
+              const data = res.data;
+              if (!data.code) {
+                this.$message(util.success("评论成功！"));
+              } else if (data.code === util.result.AUTHORIZE_FAILED) {
+                this.$message(util.error("令牌已过期，请重新登录"));
+                this.$router.push("/login");
+              } else return new Error(`评论失败，错误码：${data.code}`);
+            })
+            .then(() => {
+              this.loadComments();
+            })
+            .catch((err) => {
+              this.$message(util.error(err));
+            });
+        }
+      }
     },
   },
 };

@@ -44,12 +44,9 @@ export default {
     newArticle: function () {
       const token = util.getToken(); 
       if (token === null || token === "") {
-        this.$message({
-          message: "您还未登录，请先登录！",
-          type: "error"
-        });
+        this.$message(util.error("您还未登录，请先登录！"));
         this.$router.push('/login');
-      } else this.$router.push('/editor');
+      } else this.$router.push('/editor/create/0');
     },
   },
 };

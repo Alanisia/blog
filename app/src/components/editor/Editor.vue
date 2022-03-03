@@ -22,7 +22,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <common-editor ref="mdEditor"/>
+        <common-editor ref="mdEditor" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="display">演示</el-button>
@@ -30,7 +30,7 @@
         <el-button type="primary" @click="publish">发表</el-button>
       </el-form-item>
     </el-form>
-    <Display :displayVisible="false" ref="displayDialog" />
+    <display :displayVisible="false" ref="displayDialog" />
   </el-main>
 </template>
 
@@ -38,12 +38,11 @@
 import Display from "@/components/editor/Display";
 import axios from "axios";
 import util from "../../util";
-import CommonEditor from '../common/CommonEditor.vue';
+import CommonEditor from "../common/CommonEditor.vue";
 
 export default {
   name: "Editor",
-  components: { Display, CommonEditor }, 
-  props: ["type"], // value = { UPDATE, CREATE }
+  components: { Display, CommonEditor },
   data() {
     return {
       categories: [],
@@ -53,6 +52,7 @@ export default {
         content: "",
         category: 0,
       },
+      type: this.$route.params.type, // update/create/draft
     };
   },
   created() {
@@ -67,70 +67,62 @@ export default {
     publish: function () {
       this.editorForm.content = this.$refs.mdEditor.content;
       if (util.getToken() === null) {
-        this.$message({
-          message: "未登录，请先登录",
-          type: "error",
-        });
+        this.$message(util.error("未登录，请先登录"));
         this.$router.push("/login");
       } else {
-        axios
-          .post("/blog/publish", {
-            accountId: this.accountId,
-            category: this.editorForm.category,
-            title: this.editorForm.title,
-            content: this.editorForm.content,
-            draft: 0
-          })
-          .then((res) => {
-            const data = res.data;
-            if (data.code === util.result.AUTHORIZE_FAILED) {
-              this.$message({
-                message: "令牌已过期，请重新登录",
-                type: "error",
-              });
-              this.$router.push("/login");
-            } else {
-              this.$message({
-                message: "发表成功",
-                type: "success",
-              });
-              this.$router.push("/");
-            }
-          });
+        const content = this.editorForm.content;
+        if (content === "") this.$message(util.error("博文不能为空！"));
+        else {
+          axios
+            .post("/blog/publish", {
+              accountId: this.accountId,
+              category: this.editorForm.category,
+              title: this.editorForm.title,
+              content: content,
+              draft: 0,
+            })
+            .then((res) => {
+              const data = res.data;
+              if (data.code === util.result.AUTHORIZE_FAILED) {
+                this.$message(util.error("令牌已过期，请重新登录"));
+                this.$router.push("/login");
+              } else {
+                this.$message(util.success("发表成功"));
+                this.$router.push("/");
+              }
+            });
+        }
       }
     },
     save: function () {
       this.editorForm.content = this.$refs.mdEditor.content;
-      if (localStorage.getItem(util.commonToken) === null) {
-        this.$message({
-          message: "未登录，请先登录",
-          type: "error",
-        });
+      if (util.getToken() === null) {
+        this.$message(util.error("未登录，请先登录"));
         this.$router.push("/login");
       } else {
-        axios
-          .post("/blog/save", {
-            accountId: this.accountId,
-            category: this.editorForm.category,
-            title: this.editorForm.title,
-            content: this.editorForm.content,
-            draft: 1
-          })
-          .then((res) => {
-            const data = res.data;
-            if (data.code === util.result.AUTHORIZE_FAILED) {
-              this.$message({
-                message: "令牌已过期，请重新登录",
-                type: "error",
-              });
-            } else {
-              this.$message({
-                message: "成功保存至草稿箱，可前往个人中心查看",
-                type: "success",
-              });
-              this.$router.push('/');
-            }
-          });
+        const content = this.editorForm.content;
+        if (content === "") this.$message(util.error("博文不能为空！"));
+        else {
+          axios
+            .post("/blog/save", {
+              accountId: this.accountId,
+              category: this.editorForm.category,
+              title: this.editorForm.title,
+              content: content,
+              draft: 1,
+            })
+            .then((res) => {
+              const data = res.data;
+              if (data.code === util.result.AUTHORIZE_FAILED) {
+                this.$message(util.error("令牌已过期，请重新登录"));
+              } else {
+                this.$message(
+                  util.success("成功保存至草稿箱，可前往个人中心查看")
+                );
+                this.$router.push("/");
+              }
+            });
+        }
       }
     },
     getCategories: function () {

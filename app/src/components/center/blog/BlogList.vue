@@ -65,32 +65,8 @@ export default {
         });
     },
     handleUpdate: function (id) {
-      console.log(this.$props.type, id);
-      //  let requestURL =
-      //    type === "draft"
-      //      ? "/blog/update/save"
-      //      : type === "publish"
-      //      ? "/blog/update/publish"
-      //      : "/blog/update";
-      //  axios
-      //    .post(requestURL, {
-      //      id: util.getCurrentUser(),
-      //      blogId: id,
-      //    })
-      //    .then((res) => {
-      //      const data = res.data;
-      //      if (!data.code) {
-      //        this.$message({
-      //          message: "更新成功！",
-      //          type: "success",
-      //        });
-      //      } else {
-      //        this.$message({
-      //          message: "更新失败",
-      //          type: "error",
-      //        });
-      //      }
-      //    });
+      // console.log(this.$props.type, id);
+      this.$router.push(`/editor/update/${id}`);
     },
   },
 };

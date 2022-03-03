@@ -73,6 +73,7 @@ public class BlogService {
   }
 
   public StarredOrLiked starredOrLiked(long accountId, long blogId) {
+    log.debug("starred or liked: accountId = {}, blogId = {}", accountId, blogId);
     return new StarredOrLiked().setHaveLiked(blogDao.ifStars(accountId, blogId) > 0)
       .setHaveLiked(blogDao.ifLikes(accountId, blogId) > 0);
   }

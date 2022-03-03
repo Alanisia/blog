@@ -13,6 +13,7 @@ import alanisia.blog.model.*;
 import alanisia.blog.vo.UserDetailVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +28,7 @@ public class UserService {
   @Autowired private CategoryDao categoryDao;
   @Autowired private UserDao userDao;
 
-  // TODO: put into cache after updating
-  // @CachePut(value = "user_detail", key = "#detailVO.id")
+  @CacheEvict(cacheNames = "user_detail", key = "#detailVO.id", beforeInvocation = true)
   public void update(UserDetailVO detailVO) {
     log.debug("update user detail: user = {}", JsonUtil.json(detailVO));
     long id = detailVO.getId();
@@ -50,6 +50,7 @@ public class UserService {
     }
   }
 
+  @CacheEvict(cacheNames = "user_history", key = "#id", beforeInvocation = true)
   public boolean insertHistory(long id, long blogId) {
     log.debug("insert history: id = {}, blogId = {}", id, blogId);
     if (userDao.historyExists(id, blogId) > 0) return false;
@@ -57,12 +58,12 @@ public class UserService {
     return true;
   }
 
-  // TODO: evict from cache after removing from database
+  @CacheEvict(cacheNames = "user_history", key = "#id", beforeInvocation = true)
   public void removeHistory(long id, long blogId) {
     userDao.removeHistory(id, blogId);
   }
 
-  @Cacheable(value = "user_detail", key = "#id")
+  @Cacheable(cacheNames = "user_detail", key = "#id")
   public UserDetailDTO detail(long id) {
     log.debug("user detail: id = {}", id);
     UserDetail detail = userDao.detail(id);
@@ -78,7 +79,7 @@ public class UserService {
     return detailDTO;
   }
 
-  @Cacheable(value = "user_history", key = "#id")
+  @Cacheable(cacheNames = "user_history", key = "#id")
   public List<BlogItem> history(long id) {
     log.debug("blog history: id = {}", id);
     List<BlogHistory> histories = userDao.history(id);
@@ -87,7 +88,7 @@ public class UserService {
     return items;
   }
 
-  @Cacheable(value = "user_star", key = "#id")
+  @Cacheable(cacheNames = "user_star", key = "#id")
   public List<BlogItem> star(long id) {
     log.debug("blog starred by user: id = {}", id);
     List<StarBlog> starBlogs = userDao.star(id);
@@ -96,7 +97,7 @@ public class UserService {
     return items;
   }
 
-  @Cacheable(value = "user_publish", key = "#id")
+  @Cacheable(cacheNames = "user_publish", key = "#id")
   public List<BlogItem> publish(long id) {
     log.debug("blog published: id = {}", id);
     List<Blog> blogs = userDao.publish(id);
@@ -105,7 +106,7 @@ public class UserService {
     return items;
   }
 
-  @Cacheable(value = "user_draft", key = "#id")
+  @Cacheable(cacheNames = "user_draft", key = "#id")
   public List<BlogItem> draft(long id) {
     log.debug("blog saved as draft: id = {}", id);
     List<Blog> blogs = userDao.draft(id);
@@ -114,25 +115,25 @@ public class UserService {
     return items;
   }
 
-  @Cacheable(value = "user_draft_count", key = "#id")
+  @Cacheable(cacheNames = "user_draft_count", key = "#id")
   public int drafts(long id) {
     log.debug("count of draft: id = {}", id);
     return userDao.draftCount(id);
   }
 
-  @Cacheable(value = "user_history_count", key = "#id")
+  @Cacheable(cacheNames = "user_history_count", key = "#id")
   public int histories(long id) {
     log.debug("count of history: id = {}", id);
     return userDao.historyCount(id);
   }
 
-  @Cacheable(value = "user_publish_count", key = "#id")
+  @Cacheable(cacheNames = "user_publish_count", key = "#id")
   public int publishes(long id) {
     log.debug("count of published: id = {}", id);
     return userDao.publishCount(id);
   }
 
-  @Cacheable(value = "user_star_count", key = "#id")
+  @Cacheable(cacheNames = "user_star_count", key = "#id")
   public int stars(long id) {
     log.debug("count of starred: id = {}", id);
     return userDao.starCount(id);

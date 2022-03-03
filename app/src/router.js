@@ -32,7 +32,7 @@ const routes = [
     ]},
     {path: '/detail/:id', component: Detail},
     {path: '/404', component: Page404},
-    {path: '/editor', component: Editor},
+    {path: '/editor/:type/:id', component: Editor},
     {path: '/', component: Index, children: [
       {path: '/', component: Newest},
       {path: '/categories', component: Category}

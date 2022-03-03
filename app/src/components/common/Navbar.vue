@@ -1,6 +1,5 @@
 <template>
   <el-menu mode="horizontal" router>
-    <span></span> <!-- TODO: logo -->
     <el-menu-item index="/">首页</el-menu-item>
     <el-menu-item index="/categories">分类</el-menu-item>
     <template v-if="hasLogin">
@@ -26,7 +25,8 @@ export default {
   },
   methods: {
     logout: function() {
-       util.setToken('');
+       util.setToken("");
+       util.setCurrentUser("");
     }
   },
 };

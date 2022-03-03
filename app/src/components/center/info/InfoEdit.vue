@@ -49,17 +49,10 @@ export default {
         .then((res) => {
           const data = res.data;
           if (!data.code) {
-            this.$message({
-              message: "修改个人信息成功！",
-              type: "success",
-            });
+            this.$message(util.success("修改个人信息成功！"));
             this.dialogVisible = false;
-          } else {
-            this.$message({
-              message: `修改个人信息失败，错误码：${data.code}`,
-              type: "error",
-            });
-          }
+          } else
+            this.$message(util.error(`修改个人信息失败，错误码：${data.code}`));
         });
     },
   },

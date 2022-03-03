@@ -56,7 +56,7 @@
 <script>
 import axios from "axios";
 import md5 from "blueimp-md5";
-import util from "@/util";
+import util from "../../util";
 
 export default {
   name: "Register",
@@ -145,17 +145,14 @@ export default {
             .then((res) => {
               const data = res.data;
               if (!data.code) {
-                this.$message({
-                  message: "注册成功",
-                  type: "success"
-                });
+                this.$message(util.success("注册成功！"));
                 this.$router.push("/login");
                 return true;
               } else {
-                this.$message({
-                  message: data.message,
-                  type: "error"
-                });
+                if (data.code === util.result.CAPTCHA_ERROR) {
+                  this.$message(util.error("验证码错误，或者验证码已过期！"));
+                  this.updateCaptcha();
+                } else this.$message(util.error(data.message));
                 return false;
               }
             });

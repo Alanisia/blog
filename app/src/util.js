@@ -11,7 +11,7 @@ export default {
   getToken: () => {
     return localStorage.getItem('blog-auth-token');
   },
-  setCurrentUser: id => localStorage.setItem('blog-auth-token', id),
+  setCurrentUser: id => localStorage.setItem('blog-current-user', id),
   getCurrentUser: () => {
     return parseInt(localStorage.getItem('blog-current-user'));
   },

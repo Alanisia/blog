@@ -2,18 +2,16 @@ package alanisia.blog.controller;
 
 import alanisia.blog.common.enums.Result;
 import alanisia.blog.common.result.R;
-import alanisia.blog.vo.Login;
-import alanisia.blog.vo.Register;
 import alanisia.blog.dto.Token;
 import alanisia.blog.service.AccountService;
-import lombok.extern.slf4j.Slf4j;
+import alanisia.blog.vo.Login;
+import alanisia.blog.vo.Register;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @CrossOrigin
 @RestController
 public class AccountController {

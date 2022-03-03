@@ -35,7 +35,7 @@ public class CommentService {
     commentDao.insert(comment);
   }
 
-  @CacheEvict(cacheNames = "replies", key = "#commentVO.commentId", beforeInvocation = true)
+  @CacheEvict(cacheNames = "replies", key = "#replyVO.commentId", beforeInvocation = true)
   public void reply(ReplyVO replyVO) {
     log.debug("Reply: {}", JsonUtil.json(replyVO));
     if (replyVO.getContent().length() == 0) throw new BusinessException(Result.NULL_EXCEPTION);
@@ -70,9 +70,9 @@ public class CommentService {
     List<CommentDTO> comments = new ArrayList<>();
     commentDao.comments(blogId).forEach(c -> {
       if (0 == c.getCommentId()) {
-        CommentDTO comment = new CommentDTO().setAccountId(c.getAccountId()).setBlogId(c.getBlogId())
-          .setCommentId(0).setTargetId(0).setTarget("").setContent(c.getContent()).setCreateAt(c.getCreateAt())
-          .setCommenter(accountDao.select(c.getAccountId()).getUsername());
+        CommentDTO comment = new CommentDTO().setId(c.getId()).setAccountId(c.getAccountId())
+          .setBlogId(c.getBlogId()).setCommentId(0).setTargetId(0).setTarget("").setContent(c.getContent())
+          .setCreateAt(c.getCreateAt()).setCommenter(accountDao.select(c.getAccountId()).getUsername());
         comments.add(comment);
       }
     });
@@ -81,12 +81,13 @@ public class CommentService {
 
   @Cacheable(cacheNames = "replies", key = "#commentId")
   public List<CommentDTO> getReplies(long commentId) {
+    log.debug("get replies: commentId = {}", commentId);
     List<CommentDTO> replies = new ArrayList<>();
     commentDao.replies(commentId).forEach(c -> {
       CommentDTO reply = new CommentDTO().setAccountId(c.getAccountId()).setBlogId(c.getBlogId())
         .setCommentId(c.getCommentId()).setCommenter(accountDao.select(c.getAccountId()).getUsername())
         .setTargetId(c.getTargetId()).setTarget(accountDao.select(c.getTargetId()).getUsername())
-        .setContent(c.getContent()).setCreateAt(c.getCreateAt());
+        .setContent(c.getContent()).setCreateAt(c.getCreateAt()).setId(c.getId());
       replies.add(reply);
     });
     return replies;

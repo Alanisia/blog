@@ -95,7 +95,6 @@ export default {
     login: function () {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          console.log(this.loginForm);
           axios
             .post("/login", {
               email: this.loginForm.email,
@@ -104,37 +103,32 @@ export default {
               captchaImage: this.captchaImage,
             })
             .then((res) => {
-              const data = res.data.data;
+              const data = res.data;
               if (!data.code) {
-                this.$message({
-                  message: "登录成功！",
-                  type: "success",
-                });
-                util.setToken(data.token);
-                util.setCurrentUser(data.accountId);
+                this.$message(util.success("登录成功！"));
+                util.setToken(data.data.token);
+                util.setCurrentUser(data.data.accountId);
                 this.$router.push("/");
                 return true;
               } else {
-                if (data.code === util.result.ACCOUNT_NOT_FOUND) {
-                  this.$message({
-                    message: "账户不存在！",
-                    type: "error",
-                  });
-                } else if (data.code === util.result.PASSWORD_INCORRECT) {
-                  this.$message({
-                    message: "密码错误！",
-                    type: "error",
-                  });
-                } else if (data.code === util.result.CAPTCHA_ERROR) {
-                  this.$message({
-                    message: "验证码错误！",
-                    type: "error",
-                  });
-                } else {
-                  this.$message({
-                    message: `未知错误，错误码：${data.code}`,
-                    type: "error",
-                  });
+                switch (data.code) {
+                  case util.result.ACCOUNT_NOT_FOUND: {
+                    this.$message(util.error("账户不存在！"));
+                    break;
+                  }
+                  case util.result.PASSWORD_INCORRECT: {
+                    this.$message(util.error("密码错误！"));
+                    break;
+                  }
+                  case util.result.CAPTCHA_ERROR: {
+                    this.$message(util.error("验证码错误，或者验证码已过期！"));
+                    this.updateCaptcha();
+                    break;
+                  }
+                  default: {
+                    this.$message(util.error(`未知错误，错误码：${data.code}`));
+                    break;
+                  }
                 }
                 return false;
               }

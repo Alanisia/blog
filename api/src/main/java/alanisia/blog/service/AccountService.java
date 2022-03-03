@@ -67,22 +67,23 @@ public class AccountService {
   public CaptchaUtil.Captcha captcha(String oldImage) {
     if (StringUtils.hasLength(oldImage)) redisTemplate.delete(oldImage);
     CaptchaUtil.Captcha c = CaptchaUtil.generate(200, 120);
-    redisTemplate.opsForValue().set(c.getBase64(), c.getCode(), 30, TimeUnit.MINUTES);
+    redisTemplate.opsForValue().set(c.getBase64(), c.getCode(), 3, TimeUnit.MINUTES);
     return c;
   }
 
   public boolean tokenAuthorize(String token) {
+    log.debug("token authorize: token = {}", token);
     if (token == null) return false;
     String subject = JwtUtil.subject(token);
     String value = redisTemplate.opsForValue().get(subject);
-    log.debug("value = {}, token = {}, subject = {}", value, token, subject);
+    log.debug("token authorize: value = {}, token = {}, subject = {}", value, token, subject);
     return token.equals(value);
   }
 
   public String signToken(Account account) {
     String subject = String.valueOf(account.getId());
     String token = JwtUtil.sign(subject);
-    redisTemplate.opsForValue().set(String.valueOf(account.getId()), token, 3, TimeUnit.MINUTES);
+    redisTemplate.opsForValue().set(String.valueOf(account.getId()), token);
     return token;
   }
 

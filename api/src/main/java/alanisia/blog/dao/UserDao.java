@@ -16,7 +16,7 @@ public interface UserDao {
   @Update("update user_detail set gender = #{detail.gender} where account_id = #{detail.accountId}")
   void update(@Param("detail") UserDetail detail);
 
-  @Select("select * from user_detail where id = #{id}")
+  @Select("select * from user_detail where account_id = #{id}")
   @Results({
     @Result(column = "id", property = "id"),
     @Result(column = "account_id", property = "accountId"),
