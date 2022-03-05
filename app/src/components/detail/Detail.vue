@@ -6,10 +6,10 @@
     <p>
       <span>更新时间：{{ blog.updateTime }}</span>
       <span style="float: right">
-        <el-button icon="el-icon-star-off" @click="star">
+        <el-button :style="haveStarred ? 'background-color: #409EFF' : ''" @click="star">
           收藏 {{ blog.stars }}
         </el-button>
-        <el-button icon="" @click="like">点赞 {{ blog.likes }}</el-button>
+        <el-button :style="haveLiked ? 'background-color: #409EFF' : ''" @click="like">点赞 {{ blog.likes }}</el-button>
       </span>
     </p>
     <h3>评论区（登录后方可参与评论）（共{{ blog.comments }}条评论）</h3>
@@ -95,12 +95,12 @@ export default {
           this.blog.comments = data.comments;
           this.blog.stars = data.stars;
           this.blog.likes = data.likes;
-          this.blog.updateTime = data.updateTime;
+          this.blog.updateTime = util.dateFormat(data.updateTime);
         }
       });
     },
     loadStarredOrLiked: function () {
-      if (util.getToken() !== null)
+      if (util.getToken())
         axios
           .get(
             `/blog/starredOrLiked?accountId=${util.getCurrentUser()}&blogId=${
@@ -120,7 +120,7 @@ export default {
       });
     },
     star: function () {
-      if (util.getToken() === null) {
+      if (!util.getToken()) {
         this.$message(util.error("未登录，请先登录"));
         this.$router.push("/login");
       } else {
@@ -162,7 +162,7 @@ export default {
       }
     },
     like: function () {
-      if (util.getToken() === null) {
+      if (!util.getToken()) {
         this.$message(util.error("未登录，请先登录"));
         this.$router.push("/login");
       } else {
@@ -204,7 +204,7 @@ export default {
       }
     },
     insertHistory: function () {
-      if (util.getToken() !== null) {
+      if (util.getToken()) {
         axios.post("/history/insert", {
           accountId: util.getCurrentUser(),
           blogId: this.blog.id,
@@ -212,12 +212,12 @@ export default {
       }
     },
     comment: function () {
-      if (util.getToken() === null) {
+      if (!util.getToken()) {
         this.$message(util.error("未登录，请先登录"));
         this.$router.push("/login");
       } else {
         const content = this.commentForm.mdText;
-        if (content === "") this.$message(util.error("评论不能为空！"));
+        if (!content) this.$message(util.error("评论不能为空！"));
         else {
           axios
             .post("/comment", {

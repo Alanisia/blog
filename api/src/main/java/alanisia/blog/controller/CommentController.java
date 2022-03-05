@@ -2,6 +2,7 @@ package alanisia.blog.controller;
 
 import alanisia.blog.common.result.R;
 import alanisia.blog.service.CommentService;
+import alanisia.blog.vo.CommentLikeVO;
 import alanisia.blog.vo.CommentVO;
 import alanisia.blog.vo.DeleteCommentVO;
 import alanisia.blog.vo.ReplyVO;
@@ -54,7 +55,19 @@ public class CommentController {
   }
 
   @PostMapping("/comment/like")
-  public R like(long commentId) {
+  public R like(@RequestBody CommentLikeVO commentLikeVO) {
+    commentService.like(commentLikeVO);
     return R.ok();
+  }
+
+  @PostMapping("/comment/like/cancel")
+  public R cancelLike(@RequestBody CommentLikeVO commentLikeVO) {
+    commentService.cancelLike(commentLikeVO);
+    return R.ok();
+  }
+
+  @GetMapping("/comment/liked")
+  public R liked(long accountId, long commentId) {
+    return R.ok().setData(commentService.liked(accountId, commentId));
   }
 }

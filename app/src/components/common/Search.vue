@@ -35,7 +35,9 @@ export default {
   },
   methods: {
     search: function () {
-      axios.get(`/blog/search?keyword=${this.searchForm.keyword}`).then(res => {
+      const keyword = this.searchForm.keyword;
+      if (keyword.length === 0) this.$message(util.error("搜索关键词不能为空！"));
+      else axios.get(`/blog/search?keyword=${keyword}`).then(res => {
         const data = res.data.data;
         // TODO: show data with blog list component
         console.log(data);

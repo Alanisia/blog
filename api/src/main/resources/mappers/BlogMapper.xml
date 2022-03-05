@@ -25,9 +25,12 @@
     select * from blog
   </select>
   <select id="selectByCategory" resultMap="BlogResultMap">
-    select * from blog where `category_id` = #{id,jdbcType=INTEGER}
+    select * from blog where `category_id` = #{id,jdbcType=INTEGER} order by update_at desc
       limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
-      order by update_at desc
+  </select>
+  <select id="selectAll" resultMap="BlogResultMap">
+    select * from blog order by update_at desc
+      limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
   </select>
   <select id="search" resultMap="BlogResultMap">
     select * from blog where title like %#{pattern,jdbcType=VARCHAR}%

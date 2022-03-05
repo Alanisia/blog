@@ -26,11 +26,16 @@ public interface CommentDao {
   void cancelLike(@Param("accountId") long accountId, @Param("commentId") long commentId);
 
   @Select("select count(*) from comment_like where `account_id` = #{accountId} and `comment_id` = #{commentId}")
-  int likes(@Param("accountId") long accountId, @Param("commentId") long commentId);
+  int liked(@Param("accountId") long accountId, @Param("commentId") long commentId);
+
+  @Select("select count(*) from comment_like where `comment_id` = #{commentId}")
+  int likes(@Param("commentId") long commentId);
+
+  @Delete("delete from comment_like where `comment_id` = #{commentId}")
+  void removeLikes(@Param("commentId") long commentId);
 
   List<Comment> comments(@Param("blogId") long blogId);
 
-  // TODO: replies whether to be counted haven't decided yet
   @Select("select count(*) from comment where blog_id = #{blogId}")
   int commentCount(@Param("blogId") long blogId);
 

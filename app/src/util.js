@@ -1,3 +1,5 @@
+import moment from "moment"
+
 export default {
   isEmail: email => {
     let emailReg = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/)
@@ -14,6 +16,9 @@ export default {
   setCurrentUser: id => localStorage.setItem('blog-current-user', id),
   getCurrentUser: () => {
     return parseInt(localStorage.getItem('blog-current-user'));
+  },
+  dateFormat: date => {
+    return moment(date).format("YYYY-MM-DD HH:mm:ss");
   },
   result: {
     "OK": 0,

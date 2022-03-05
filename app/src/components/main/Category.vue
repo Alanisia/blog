@@ -35,13 +35,14 @@ export default {
       categoryId: 0,
       categories: [],
       list: [],
-      currentPage: 0,
+      currentPage: 1,
       total: 0,
       pages: 0,
     };
   },
   created() {
     this.loadCategories();
+    this.loadList();
   },
   methods: {
     loadCategories: function () {

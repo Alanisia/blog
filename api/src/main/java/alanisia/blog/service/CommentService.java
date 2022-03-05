@@ -5,8 +5,10 @@ import alanisia.blog.common.util.JsonUtil;
 import alanisia.blog.dao.AccountDao;
 import alanisia.blog.dao.CommentDao;
 import alanisia.blog.dto.CommentDTO;
+import alanisia.blog.dto.CommentLiked;
 import alanisia.blog.exception.BusinessException;
 import alanisia.blog.model.Comment;
+import alanisia.blog.vo.CommentLikeVO;
 import alanisia.blog.vo.CommentVO;
 import alanisia.blog.vo.DeleteCommentVO;
 import alanisia.blog.vo.ReplyVO;
@@ -54,10 +56,10 @@ public class CommentService {
     commentDao.delete(deleteCommentVO.getCommentId());
   }
 
-
   @CacheEvict(cacheNames = "replies", key = "#deleteCommentVO.commentId", beforeInvocation = true)
   public void removeReply(DeleteCommentVO deleteCommentVO) {
     commentDao.delete(deleteCommentVO.getReplyId());
+    commentDao.removeLikes(deleteCommentVO.getReplyId());
   }
 
   @CacheEvict(cacheNames = "comments", key = "#deleteCommentVO.blogId", beforeInvocation = true)
@@ -72,7 +74,8 @@ public class CommentService {
       if (0 == c.getCommentId()) {
         CommentDTO comment = new CommentDTO().setId(c.getId()).setAccountId(c.getAccountId())
           .setBlogId(c.getBlogId()).setCommentId(0).setTargetId(0).setTarget("").setContent(c.getContent())
-          .setCreateAt(c.getCreateAt()).setCommenter(accountDao.select(c.getAccountId()).getUsername());
+          .setCreateAt(c.getCreateAt()).setCommenter(accountDao.select(c.getAccountId()).getUsername())
+          .setLike(commentDao.likes(c.getId()));
         comments.add(comment);
       }
     });
@@ -84,12 +87,24 @@ public class CommentService {
     log.debug("get replies: commentId = {}", commentId);
     List<CommentDTO> replies = new ArrayList<>();
     commentDao.replies(commentId).forEach(c -> {
-      CommentDTO reply = new CommentDTO().setAccountId(c.getAccountId()).setBlogId(c.getBlogId())
+      CommentDTO reply = new CommentDTO().setAccountId(c.getAccountId()).setBlogId(c.getBlogId()).setId(c.getId())
         .setCommentId(c.getCommentId()).setCommenter(accountDao.select(c.getAccountId()).getUsername())
         .setTargetId(c.getTargetId()).setTarget(accountDao.select(c.getTargetId()).getUsername())
-        .setContent(c.getContent()).setCreateAt(c.getCreateAt()).setId(c.getId());
+        .setContent(c.getContent()).setCreateAt(c.getCreateAt()).setLike(commentDao.likes(c.getId()));
       replies.add(reply);
     });
     return replies;
+  }
+
+  public CommentLiked liked(long accountId, long commentId) {
+    return new CommentLiked().setLiked(commentDao.liked(accountId, commentId) > 0);
+  }
+
+  public void like(CommentLikeVO commentLikeVO) {
+    commentDao.like(commentLikeVO.getAccountId(), commentLikeVO.getCommentId());
+  }
+
+  public void cancelLike(CommentLikeVO commentLikeVO) {
+    commentDao.cancelLike(commentLikeVO.getAccountId(), commentLikeVO.getCommentId());
   }
 }

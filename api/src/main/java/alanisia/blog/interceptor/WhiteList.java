@@ -19,6 +19,7 @@ public class WhiteList extends WebMvcConfigurationSupport {
     pathPatterns.add("/login");
     pathPatterns.add("/register");
     pathPatterns.add("/captcha");
+    pathPatterns.add("/categories");
     pathPatterns.add("/blog/newest");
     pathPatterns.add("/blog/category");
     pathPatterns.add("/blog/search");

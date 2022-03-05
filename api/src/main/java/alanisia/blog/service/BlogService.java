@@ -96,10 +96,10 @@ public class BlogService {
   @Cacheable(cacheNames = "list_category")
   public BlogPagination listWithCategory(int id, int page, int limit) {
     log.debug("list with category: id = {}, page = {}, limit = {}", id, page, limit);
-    BlogPagination p = new BlogPagination()
-      .setCurrentPage(page).setPages(blogDao.countOfCategory(id) % limit + 1);
     int offset = limit * (page - 1);
-    List<Blog> blogs = blogDao.selectByCategory(id, limit, offset);
+    List<Blog> blogs = id == 0 ? blogDao.selectAll(limit, offset) : blogDao.selectByCategory(id, limit, offset);
+    BlogPagination p = new BlogPagination().setCurrentPage(page)
+      .setPages((id == 0 ? blogDao.count() : blogDao.countOfCategory(id)) % limit + 1);
     List<BlogItem> items = new ArrayList<>();
     blogs.forEach(blog -> {
       BlogItem item = new BlogItem().setId(blog.getId()).setLike(blogDao.likes(blog.getId()))

@@ -6,6 +6,7 @@ import alanisia.blog.common.util.JsonUtil;
 import alanisia.blog.service.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,24 +18,26 @@ import java.io.PrintWriter;
 public class RequestInterceptor implements HandlerInterceptor {
   @Autowired private AccountService accountService;
 
-  // TODO: value is null when the uri of request isn't in white list
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+    if (HttpMethod.OPTIONS.toString().equals(request.getMethod())){
+      response.setStatus(HttpServletResponse.SC_OK);
+      return true;
+    }
     String value = request.getHeader("Authorization");
+    response.setCharacterEncoding("UTF-8");
+    response.setContentType("text/json; charset=utf-8");
     PrintWriter writer = response.getWriter();
     log.debug("authorization = {}", value);
     if (value == null) {
-      // response.sendError(Result.NULL_EXCEPTION.getCode());
-      // outputStream.print();
-      writer.write(JsonUtil.json(R.error(Result.NULL_EXCEPTION)));
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      writer.print(JsonUtil.json(R.error(Result.NULL_EXCEPTION)));
       return false;
     }
-      // throw new BusinessException(Result.NULL_EXCEPTION);
     if (!accountService.tokenAuthorize(value)) {
       log.debug("auth failed");
-      // throw new BusinessException(Result.AUTHORIZE_FAILED);
-      // response.sendError(Result.AUTHORIZE_FAILED.getCode());
-      writer.write(JsonUtil.json(R.error(Result.AUTHORIZE_FAILED)));
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      writer.print(JsonUtil.json(R.error(Result.AUTHORIZE_FAILED)));
       return false;
     }
     return true;

@@ -52,6 +52,8 @@ public interface BlogDao {
 
   List<Blog> selectByCategory(int id, int limit, int offset);
 
+  List<Blog> selectAll(int limit, int offset);
+
   @Select("select count(*) from blog")
   int count();
 
