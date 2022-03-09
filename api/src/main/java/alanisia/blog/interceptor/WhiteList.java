@@ -1,5 +1,6 @@
 package alanisia.blog.interceptor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -11,9 +12,11 @@ import java.util.List;
 
 @Configuration
 public class WhiteList extends WebMvcConfigurationSupport {
+  @Autowired private RequestInterceptor requestInterceptor;
+
   @Override
   protected void addInterceptors(InterceptorRegistry registry) {
-    InterceptorRegistration registration = registry.addInterceptor(new RequestInterceptor());
+    InterceptorRegistration registration = registry.addInterceptor(requestInterceptor);
     registration.addPathPatterns("/**");
     List<String> pathPatterns = new ArrayList<>();
     pathPatterns.add("/login");

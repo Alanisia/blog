@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import axios from 'axios';
-import util from '../../util';
+import axios from "axios";
+import util from "../../util";
 export default {
   name: "Search",
   data() {
@@ -36,19 +36,24 @@ export default {
   methods: {
     search: function () {
       const keyword = this.searchForm.keyword;
-      if (keyword.length === 0) this.$message(util.error("搜索关键词不能为空！"));
-      else axios.get(`/blog/search?keyword=${keyword}`).then(res => {
-        const data = res.data.data;
-        // TODO: show data with blog list component
-        console.log(data);
-      });
+      if (keyword.length === 0)
+        this.$message(util.error("搜索关键词不能为空！"));
+      else
+        axios.get(`/blog/search?keyword=${keyword}`).then((res) => {
+          const data = res.data;
+          if (!data.code) {
+            const result = data.data;
+            // TODO: show data with blog list component
+            console.log(result);
+          } else util.error("搜索失败，请稍候重试！");
+        });
     },
     newArticle: function () {
-      const token = util.getToken(); 
+      const token = util.getToken();
       if (token === null || token === "") {
         this.$message(util.error("您还未登录，请先登录！"));
-        this.$router.push('/login');
-      } else this.$router.push('/editor/create/0');
+        this.$router.push("/login");
+      } else this.$router.push("/editor/create/0");
     },
   },
 };

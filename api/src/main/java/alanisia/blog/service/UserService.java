@@ -2,10 +2,7 @@ package alanisia.blog.service;
 
 import alanisia.blog.common.enums.Result;
 import alanisia.blog.common.util.JsonUtil;
-import alanisia.blog.dao.AccountDao;
-import alanisia.blog.dao.BlogDao;
-import alanisia.blog.dao.CategoryDao;
-import alanisia.blog.dao.UserDao;
+import alanisia.blog.dao.*;
 import alanisia.blog.dto.BlogItem;
 import alanisia.blog.dto.UserDetailDTO;
 import alanisia.blog.exception.BusinessException;
@@ -26,6 +23,7 @@ public class UserService {
   @Autowired private AccountDao accountDao;
   @Autowired private BlogDao blogDao;
   @Autowired private CategoryDao categoryDao;
+  @Autowired private CommentDao commentDao;
   @Autowired private UserDao userDao;
 
   @CacheEvict(cacheNames = "user_detail", key = "#detailVO.id", beforeInvocation = true)
@@ -38,9 +36,7 @@ public class UserService {
     else {
       UserDetail detail = userDao.detail(id);
       if (detail == null) {
-        detail = new UserDetail()
-          .setAccountId(id)
-          .setGender(detailVO.getGender());
+        detail = new UserDetail().setAccountId(id).setGender(detailVO.getGender());
         userDao.insert(detail);
       } else userDao.update(detail);
       if (!account.getUsername().equals(detailVO.getUsername())) {
@@ -68,12 +64,8 @@ public class UserService {
     log.debug("user detail: id = {}", id);
     UserDetail detail = userDao.detail(id);
     Account account = accountDao.select(id);
-    UserDetailDTO detailDTO = new UserDetailDTO()
-      .setId(id)
-      .setEmail(account.getEmail())
-      .setUsername(account.getUsername())
-      .setPublish(userDao.publishCount(id))
-      .setStar(userDao.starCount(id));
+    UserDetailDTO detailDTO = new UserDetailDTO().setId(id).setEmail(account.getEmail())
+      .setUsername(account.getUsername()).setPublish(userDao.publishCount(id)).setStar(userDao.starCount(id));
     if (detail != null)
       detailDTO.setGender(detail.getGender());
     return detailDTO;
@@ -150,13 +142,8 @@ public class UserService {
     Blog blog = blogDao.select(blogId);
     Category category = categoryDao.category(blog.getCategoryId());
     Account account = accountDao.select(accountId);
-    return new BlogItem()
-      .setId(blog.getId())
-      .setAuthor(account.getUsername())
-      .setCategory(category.getName())
-      .setTitle(blog.getTitle())
-      .setLike(blogDao.likes(blog.getId()))
-      .setStar(blogDao.stars(blog.getId()))
-      .setUpdateAt(blog.getUpdateAt());
+    return new BlogItem().setId(blog.getId()).setAuthor(account.getUsername()).setCategory(category.getName())
+      .setTitle(blog.getTitle()).setLike(blogDao.likes(blog.getId())).setStar(blogDao.stars(blog.getId()))
+      .setComment(commentDao.commentCount(blog.getId())).setUpdateAt(blog.getUpdateAt());
   }
 }

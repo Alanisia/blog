@@ -16,7 +16,7 @@
             v-for="category in categories"
             :key="category.id"
             :label="category.name"
-            :value="category"
+            :value="category.id"
           >
           </el-option>
         </el-select>
@@ -50,15 +50,28 @@ export default {
       editorForm: {
         title: "",
         content: "",
-        category: 0,
+        category: "",
       },
+      blogId: this.$route.params.id,
       type: this.$route.params.type, // update/create/draft
     };
   },
   created() {
     this.getCategories();
+    this.loadBlog();
   },
   methods: {
+    loadBlog: function () {
+      if (this.type !== "create" && this.blogId > 0) {
+        axios.get(`/blog/detail/${this.blogId}`).then((res) => {
+          const data = res.data.data;
+          this.editorForm.title = data.title;
+          this.editorForm.content = data.content;
+          this.editorForm.category = data.category.id;
+          this.$refs.mdEditor.content = this.editorForm.content;
+        });
+      }
+    },
     display: function () {
       this.editorForm.content = this.$refs.mdEditor.content;
       this.$refs.displayDialog.mdText = this.editorForm.content;
@@ -73,24 +86,33 @@ export default {
         const content = this.editorForm.content;
         if (content === "") this.$message(util.error("博文不能为空！"));
         else {
-          axios
-            .post("/blog/publish", {
-              accountId: this.accountId,
-              category: this.editorForm.category,
-              title: this.editorForm.title,
-              content: content,
-              draft: 0,
-            })
-            .then((res) => {
-              const data = res.data;
-              if (data.code === util.result.AUTHORIZE_FAILED) {
-                this.$message(util.error("令牌已过期，请重新登录"));
-                this.$router.push("/login");
-              } else {
-                this.$message(util.success("发表成功"));
-                this.$router.push("/");
-              }
-            });
+          let requestURL =
+            this.type === "update" ? "/blog/update/publish" : "/blog/publish";
+          let blog = {
+            authorId: this.accountId,
+            categoryId: this.editorForm.category,
+            title: this.editorForm.title,
+            content: content,
+            draft: 0,
+          };
+          let params =
+            this.type === "update"
+              ? {
+                  id: this.blogId,
+                  blog: blog,
+                }
+              : blog;
+          let msg = this.type === "update" ? "更新" : "发表";
+          axios.post(requestURL, params).then((res) => {
+            const data = res.data;
+            if (data.code === util.result.AUTHORIZE_FAILED) {
+              this.$message(util.error("令牌已过期，请重新登录"));
+              this.$router.push("/login");
+            } else {
+              this.$message(util.success(`${msg}成功`));
+              this.$router.push("/");
+            }
+          });
         }
       }
     },
@@ -103,15 +125,26 @@ export default {
         const content = this.editorForm.content;
         if (content === "") this.$message(util.error("博文不能为空！"));
         else {
-          axios
-            .post("/blog/save", {
-              accountId: this.accountId,
-              category: this.editorForm.category,
+          if (this.type === "update")
+            this.$message(util.error("不支持保存已发布文章的更新！"));
+          else {
+            let requestURL =
+              this.type === "draft" ? "/blog/update/save" : "/blog/save";
+            let blog = {
+              authorId: this.accountId,
+              categoryId: this.editorForm.category,
               title: this.editorForm.title,
               content: content,
               draft: 1,
-            })
-            .then((res) => {
+            };
+            let params =
+              this.type === "draft"
+                ? {
+                    id: this.blogId,
+                    blog: blog,
+                  }
+                : blog;
+            axios.post(requestURL, params).then((res) => {
               const data = res.data;
               if (data.code === util.result.AUTHORIZE_FAILED) {
                 this.$message(util.error("令牌已过期，请重新登录"));
@@ -122,6 +155,7 @@ export default {
                 this.$router.push("/");
               }
             });
+          }
         }
       }
     },

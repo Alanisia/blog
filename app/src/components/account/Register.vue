@@ -37,7 +37,7 @@
         ></el-input>
       </el-form-item>
       <el-form-item label="验证码" prop="captchaCode">
-        <el-input v-model="registerForm.captchaCode" placeholder="请输入验证码">
+        <el-input v-model="registerForm.captchaCode" placeholder="请输入验证码（三分钟内有效）">
           <el-image
             style="width: 56px"
             slot="append"

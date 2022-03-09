@@ -11,6 +11,7 @@ import alanisia.blog.dto.BlogPagination;
 import alanisia.blog.dto.StarredOrLiked;
 import alanisia.blog.model.Account;
 import alanisia.blog.model.Blog;
+import alanisia.blog.model.Category;
 import alanisia.blog.vo.AccountIdAndBlogId;
 import alanisia.blog.vo.BlogVO;
 import alanisia.blog.vo.UpdateBlogVO;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,19 +36,24 @@ public class BlogService {
   @CacheEvict(cacheNames = "newest", beforeInvocation = true)
   public void insertBlog(BlogVO vo) {
     log.debug("create blog: blog = {}", JsonUtil.json(vo));
-    Blog blog = new Blog().setAccountId(vo.getAuthorId()).setCategoryId(vo.getCategory().getId())
+    Blog blog = new Blog().setAccountId(vo.getAuthorId()).setCategoryId(vo.getCategoryId())
       .setTitle(vo.getTitle()).setContent(vo.getContent()).setDraft(vo.getDraft());
     blogDao.insert(blog);
   }
 
+  @CacheEvict(cacheNames = "detail", key = "#vo.id", beforeInvocation = true)
   public void updateBlog(UpdateBlogVO vo) {
     log.debug("update blog: blog = {}", JsonUtil.json(vo));
     Blog blog = new Blog().setAccountId(vo.getBlog().getAuthorId()).setTitle(vo.getBlog().getTitle())
-      .setCategoryId(vo.getBlog().getCategory().getId()).setContent(vo.getBlog().getContent())
+      .setCategoryId(vo.getBlog().getCategoryId()).setContent(vo.getBlog().getContent())
       .setDraft(vo.getBlog().getDraft());
     blogDao.update(vo.getId(), blog);
   }
 
+  @Caching(evict = {
+    @CacheEvict(cacheNames = "detail", key = "#id", beforeInvocation = true),
+    @CacheEvict(cacheNames = "newest", beforeInvocation = true)
+  })
   public void deleteBlog(long id) {
     log.debug("delete blog: id = {}", id);
     blogDao.delete(id);
@@ -74,7 +81,7 @@ public class BlogService {
 
   public StarredOrLiked starredOrLiked(long accountId, long blogId) {
     log.debug("starred or liked: accountId = {}, blogId = {}", accountId, blogId);
-    return new StarredOrLiked().setHaveLiked(blogDao.ifStars(accountId, blogId) > 0)
+    return new StarredOrLiked().setHaveStarred(blogDao.ifStars(accountId, blogId) > 0)
       .setHaveLiked(blogDao.ifLikes(accountId, blogId) > 0);
   }
 
@@ -119,9 +126,10 @@ public class BlogService {
     int likes = blogDao.likes(blog.getId());
     int stars = blogDao.stars(blog.getId());
     int comments = commentDao.commentCount(id);
+    Category category = categoryDao.category(blog.getCategoryId());
     return new BlogDetail().setId(id).setTitle(blog.getTitle()).setStars(stars).setLikes(likes)
       .setAuthor(account.getUsername()).setUpdateTime(blog.getUpdateAt()).setContent(blog.getContent())
-      .setCategory(categoryDao.category(blog.getCategoryId()).getName()).setComments(comments);
+      .setCategory(category).setComments(comments);
   }
 
   public List<BlogItem> search(String pattern) {

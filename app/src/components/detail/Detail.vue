@@ -6,15 +6,15 @@
     <p>
       <span>更新时间：{{ blog.updateTime }}</span>
       <span style="float: right">
-        <el-button :style="haveStarred ? 'background-color: #409EFF' : ''" @click="star">
+        <el-button :style="haveStarred ? 'background-color: #8ac4ff' : ''" @click="star">
           收藏 {{ blog.stars }}
         </el-button>
-        <el-button :style="haveLiked ? 'background-color: #409EFF' : ''" @click="like">点赞 {{ blog.likes }}</el-button>
+        <el-button :style="haveLiked ? 'background-color: #8ac4ff' : ''" @click="like">点赞 {{ blog.likes }}</el-button>
       </span>
     </p>
     <h3>评论区（登录后方可参与评论）（共{{ blog.comments }}条评论）</h3>
     <comment v-for="comment in comments" :comment="comment" :key="comment.id" />
-    <h4>Markdown编辑器</h4>
+    <h4>发表评论（Markdown编辑器）</h4>
     <el-form :model="commentForm" ref="commentForm">
       <el-form-item>
         <common-editor ref="commentEditor" />
@@ -61,8 +61,8 @@ export default {
       comments: [],
     };
   },
-  created() {
-    this.loadBlog();
+  async created() {
+    await this.loadBlog();
     this.loadStarredOrLiked();
     this.loadComments();
     this.insertHistory();
@@ -81,8 +81,8 @@ export default {
       this.$refs.displayDialog.mdText = this.commentForm.mdText;
       this.$refs.displayDialog.displayVisible = true;
     },
-    loadBlog: function () {
-      axios.get(`/blog/detail/${this.blog.id}`).then((res) => {
+    loadBlog: async function () {
+      return axios.get(`/blog/detail/${this.blog.id}`).then((res) => {
         const data = res.data.data;
         if (data === null) {
           this.$router.push("/404");
@@ -90,7 +90,7 @@ export default {
           this.blog.id = data.id;
           this.blog.author = data.author;
           this.blog.title = data.title;
-          this.blog.category = data.category;
+          this.blog.category = data.category.name;
           this.blog.content = data.content;
           this.blog.comments = data.comments;
           this.blog.stars = data.stars;

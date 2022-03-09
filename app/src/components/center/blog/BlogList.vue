@@ -44,10 +44,6 @@ export default {
     showUpdate: function () {
       return this.$props.type === "draft" || this.$props.type === "publish";
     },
-    rowClick: function (row) {
-      let id = row.id;
-      this.$router.push(`/detail/${id}`);
-    },
     handleDelete: function (id) {
       const accountId = util.getCurrentUser();
       const type = this.$props.type;
@@ -82,11 +78,15 @@ export default {
         });
     },
     handleUpdate: function (id) {
-      // TODO
-      this.$router.push(`/editor/update/${id}`);
+      let type = this.type === "publish" ? "update" : "draft";
+      this.$router.push(`/editor/${type}/${id}`);
     },
     dateFormat: function (row) {
       return row.updateAt ? util.dateFormat(row.updateAt) : "";
+    },
+    rowClick: function (row) {
+      let id = row.id;
+      this.$router.push(`/detail/${id}`);
     },
   },
 };

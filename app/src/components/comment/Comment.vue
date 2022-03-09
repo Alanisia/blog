@@ -8,7 +8,7 @@
         删除
       </el-button> 
       <el-button size="mini" @click="reply">回复</el-button>
-      <el-button size="mini" @click="iLike" :style="liked ? 'background-color: #409EFF' : ''">点赞 {{ like }}</el-button>
+      <el-button size="mini" @click="iLike" :style="liked ? 'background-color: #8ac4ff' : ''">点赞 {{ like }}</el-button>
       <span style="margin: auto 30px;">更新时间：{{ time }}</span>
       <el-button @click="showReplies" v-if="replies.length > 0" style="float: right;" size="mini">
         展开全部{{ replies.length }}条回复 <i :class="replyHasExpended ? 'el-icon-caret-bottom' : 'el-icon-caret-left'"></i>
@@ -65,7 +65,7 @@ export default {
           .get(
             `/comment/liked?accountId=${this.currentUser}&commentId=${this.id}`
           )
-          .then((res) => (this.liked = res.data.data));
+          .then((res) => (this.liked = res.data.data.liked));
       }
     },
     iLike: function () {

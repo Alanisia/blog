@@ -35,7 +35,7 @@ public class AccountController {
   }
 
   @PostMapping("/logout")
-  public R logout(long id) {
+  public R logout(@RequestBody long id) {
     accountService.logout(String.valueOf(id));
     return R.ok();
   }

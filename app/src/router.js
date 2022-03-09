@@ -5,6 +5,7 @@ import Main from '@/components/main/Main';
 import Index from '@/components/main/Index';
 import Newest from '@/components/main/Newest';
 import Category from '@/components/main/Category';
+import SearchResult from '@/components/main/SearchResult';
 import Editor from '@/components/editor/Editor';
 import Detail from '@/components/detail/Detail';
 import Center from '@/components/center/Center';
@@ -35,7 +36,8 @@ const routes = [
     {path: '/editor/:type/:id', component: Editor},
     {path: '/', component: Index, children: [
       {path: '/', component: Newest},
-      {path: '/categories', component: Category}
+      {path: '/categories', component: Category},
+      {path: '/search', component: SearchResult}
     ]},
   ]},
   {path: '/login', component: Login},

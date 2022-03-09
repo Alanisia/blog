@@ -1,20 +1,19 @@
 package alanisia.blog.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import alanisia.blog.model.Category;
+import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
 
-@Setter
-@Getter
+@Data
 @Accessors(chain = true)
 public class BlogDetail implements Serializable {
-  private static final long serialVersionUID = -2458539532341863531L;
+  private static final long serialVersionUID = 5998211047757680172L;
   private long id;
   private String author;
-  private String category;
+  private Category category;
   private String title;
   private String content;
   private int likes;
