@@ -13,7 +13,7 @@
       </span>
     </p>
     <h3>评论区（登录后方可参与评论）（共{{ blog.comments }}条评论）</h3>
-    <comment v-for="comment in comments" :comment="comment" :key="comment.id" />
+    <div :key="commentKey"><comment v-for="comment in comments" :comment="comment" :key="comment.id"/></div>
     <h4>发表评论（Markdown编辑器）</h4>
     <el-form :model="commentForm" ref="commentForm">
       <el-form-item>
@@ -59,6 +59,7 @@ export default {
         mdHtml: "",
       },
       comments: [],
+      commentKey: this.$store.state.commentKey
     };
   },
   async created() {
@@ -67,6 +68,11 @@ export default {
     this.loadComments();
     this.insertHistory();
   },
+  // computed: {
+  //   commentKey: function () {
+  //     return ;
+  //   }
+  // },
   watch: {
     "blog.content": function () {
       this.contentHTML = marked(this.blog.content);
@@ -74,6 +80,9 @@ export default {
     "commentForm.mdText": function () {
       this.commentForm.mdHtml = marked(this.commentForm.mdText);
     },
+    "$store.state.commentKey": function (n) {
+      this.commentKey = n;
+    }
   },
   methods: {
     display: function () {
@@ -166,7 +175,7 @@ export default {
         this.$message(util.error("未登录，请先登录"));
         this.$router.push("/login");
       } else {
-        if (!this.haveliked) {
+        if (!this.haveLiked) {
           axios
             .post("/blog/like", {
               accountId: util.getCurrentUser(),
@@ -216,6 +225,7 @@ export default {
         this.$message(util.error("未登录，请先登录"));
         this.$router.push("/login");
       } else {
+        this.commentForm.mdText = this.$refs.commentEditor.content;
         const content = this.commentForm.mdText;
         if (!content) this.$message(util.error("评论不能为空！"));
         else {
@@ -229,6 +239,7 @@ export default {
               const data = res.data;
               if (!data.code) {
                 this.$message(util.success("评论成功！"));
+                this.$store.commit('incrementCommentKey');
               } else if (data.code === util.result.AUTHORIZE_FAILED) {
                 this.$message(util.error("令牌已过期，请重新登录"));
                 this.$router.push("/login");

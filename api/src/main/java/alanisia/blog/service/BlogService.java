@@ -135,10 +135,11 @@ public class BlogService {
   public List<BlogItem> search(String pattern) {
     log.debug("search pattern = {}", pattern);
     List<BlogItem> items = new ArrayList<>();
-    blogDao.search(pattern).forEach(b -> {
+    blogDao.search("%" + pattern + "%").forEach(b -> {
       BlogItem item = new BlogItem().setId(b.getId()).setTitle(b.getTitle()).setLike(blogDao.likes(b.getId()))
         .setAuthor(accountDao.select(b.getAccountId()).getUsername()).setComment(commentDao.commentCount(b.getId()))
-        .setCategory(categoryDao.category(b.getCategoryId()).getName()).setStar(blogDao.stars(b.getId()));
+        .setCategory(categoryDao.category(b.getCategoryId()).getName()).setStar(blogDao.stars(b.getId()))
+        .setUpdateAt(b.getUpdateAt());
       items.add(item);
     });
     return items;

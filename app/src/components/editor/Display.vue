@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="演示" :visible.sync="displayVisible">
+  <el-dialog title="演示" :visible.sync="displayVisible" :append-to-body='true'>
     <div v-html="mdHtml"></div>
   </el-dialog>
 </template>

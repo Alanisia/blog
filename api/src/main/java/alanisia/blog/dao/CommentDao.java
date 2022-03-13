@@ -39,8 +39,10 @@ public interface CommentDao {
   @Select("select count(*) from comment where blog_id = #{blogId}")
   int commentCount(@Param("blogId") long blogId);
 
+  @Select("select count(*) from comment where comment_id = #{commentId}")
+  int replyCount(@Param("commentId") long commentId);
+
   List<Comment> replies(@Param("commentId") long commentId);
 
-  @Select("select blog_id where comment_id = #{commentId}")
-  long blogID(@Param("commentId") long commentId);
+  Comment select(@Param("id") long id);
 }

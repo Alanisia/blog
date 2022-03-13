@@ -3,6 +3,7 @@ package alanisia.blog.service;
 import alanisia.blog.common.enums.Result;
 import alanisia.blog.common.util.JsonUtil;
 import alanisia.blog.dao.AccountDao;
+import alanisia.blog.dao.BlogDao;
 import alanisia.blog.dao.CommentDao;
 import alanisia.blog.dto.CommentDTO;
 import alanisia.blog.dto.CommentLiked;
@@ -26,12 +27,14 @@ import java.util.List;
 @Service
 public class CommentService {
   @Autowired private AccountDao accountDao;
+  @Autowired private BlogDao blogDao;
   @Autowired private CommentDao commentDao;
 
   @CacheEvict(cacheNames = "comments", key = "#commentVO.blogId", beforeInvocation = true)
   public void comment(CommentVO commentVO) {
     log.debug("Comment: {}", JsonUtil.json(commentVO));
     if (commentVO.getContent().length() == 0) throw new BusinessException(Result.NULL_EXCEPTION);
+    if (blogDao.select(commentVO.getBlogId()) == null) throw new BusinessException(Result.NULL_EXCEPTION);
     Comment comment = new Comment().setBlogId(commentVO.getBlogId()).setCommentId(0)
       .setAccountId(commentVO.getAccountId()).setContent(commentVO.getContent()).setTargetId(0);
     commentDao.insert(comment);
@@ -41,6 +44,7 @@ public class CommentService {
   public void reply(ReplyVO replyVO) {
     log.debug("Reply: {}", JsonUtil.json(replyVO));
     if (replyVO.getContent().length() == 0) throw new BusinessException(Result.NULL_EXCEPTION);
+    if (commentDao.select(replyVO.getCommentId()) == null) throw new BusinessException(Result.NULL_EXCEPTION);
     Comment reply = new Comment().setAccountId(replyVO.getAccountId())
       .setBlogId(replyVO.getBlogId()).setCommentId(replyVO.getCommentId())
       .setTargetId(replyVO.getTargetId()).setContent(replyVO.getContent());
@@ -52,14 +56,21 @@ public class CommentService {
     @CacheEvict(cacheNames = "comments", key = "#deleteCommentVO.blogId", beforeInvocation = true)
   })
   public void removeComment(DeleteCommentVO deleteCommentVO) {
-    commentDao.replies(deleteCommentVO.getCommentId()).forEach(r -> commentDao.delete(r.getId()));
+    commentDao.replies(deleteCommentVO.getCommentId()).forEach(r -> traverseRemove(r.getId()));
     commentDao.delete(deleteCommentVO.getCommentId());
+    commentDao.removeLikes(deleteCommentVO.getCommentId());
   }
 
   @CacheEvict(cacheNames = "replies", key = "#deleteCommentVO.commentId", beforeInvocation = true)
   public void removeReply(DeleteCommentVO deleteCommentVO) {
-    commentDao.delete(deleteCommentVO.getReplyId());
-    commentDao.removeLikes(deleteCommentVO.getReplyId());
+    traverseRemove(deleteCommentVO.getReplyId());
+  }
+
+  private void traverseRemove(long replyId) {
+    commentDao.delete(replyId);
+    commentDao.removeLikes(replyId);
+    List<Comment> replies = commentDao.replies(replyId);
+    replies.forEach(r -> traverseRemove(r.getId()));
   }
 
   @CacheEvict(cacheNames = "comments", key = "#deleteCommentVO.blogId", beforeInvocation = true)
@@ -75,7 +86,7 @@ public class CommentService {
         CommentDTO comment = new CommentDTO().setId(c.getId()).setAccountId(c.getAccountId())
           .setBlogId(c.getBlogId()).setCommentId(0).setTargetId(0).setTarget("").setContent(c.getContent())
           .setCreateAt(c.getCreateAt()).setCommenter(accountDao.select(c.getAccountId()).getUsername())
-          .setLike(commentDao.likes(c.getId()));
+          .setLike(commentDao.likes(c.getId())).setTargetContent("");
         comments.add(comment);
       }
     });
@@ -86,14 +97,22 @@ public class CommentService {
   public List<CommentDTO> getReplies(long commentId) {
     log.debug("get replies: commentId = {}", commentId);
     List<CommentDTO> replies = new ArrayList<>();
+    traverse(commentId, replies);
+    return replies;
+  }
+
+  private void traverse(long commentId, List<CommentDTO> replies) {
     commentDao.replies(commentId).forEach(c -> {
+      long targetCommentId = c.getCommentId();
+      String targetContent = commentDao.select(targetCommentId).getContent();
       CommentDTO reply = new CommentDTO().setAccountId(c.getAccountId()).setBlogId(c.getBlogId()).setId(c.getId())
         .setCommentId(c.getCommentId()).setCommenter(accountDao.select(c.getAccountId()).getUsername())
         .setTargetId(c.getTargetId()).setTarget(accountDao.select(c.getTargetId()).getUsername())
-        .setContent(c.getContent()).setCreateAt(c.getCreateAt()).setLike(commentDao.likes(c.getId()));
+        .setContent(c.getContent()).setCreateAt(c.getCreateAt()).setLike(commentDao.likes(c.getId()))
+        .setTargetContent(targetContent);
       replies.add(reply);
+      traverse(reply.getId(), replies);
     });
-    return replies;
   }
 
   public CommentLiked liked(long accountId, long commentId) {

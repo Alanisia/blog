@@ -6,7 +6,7 @@
         shadow="hover"
         v-for="category in categories"
         :key="category.id"
-        @click="cardClick(category.id)"
+        @click.native="cardClick(category.id)"
       >
         {{ category.name }}
       </el-card>

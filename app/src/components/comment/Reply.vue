@@ -1,7 +1,11 @@
 <template>
-  <div>
-    <p>{{ username }} 回复： {{ target }}</p>
-    <p>{{ content }}</p>
+  <div class="reply">
+    <el-collapse>
+      <el-collapse-item :title="username + ' 回复： ' + target">
+        <div v-html="targetContent"></div>
+      </el-collapse-item>
+    </el-collapse>
+    <div v-html="content"></div>
     <p>
       <el-button
         size="mini"
@@ -20,6 +24,7 @@
 </template>
 
 <script>
+import { marked } from "marked";
 import axios from "axios";
 import util from "../../util";
 import ReplyDialog from "./ReplyDialog.vue";
@@ -32,7 +37,8 @@ export default {
       currentUser: util.getCurrentUser(),
       username: this.$props.reply.commenter,
       target: this.$props.reply.target,
-      content: this.$props.reply.content,
+      content: marked(this.$props.reply.content),
+      targetContent: marked(this.$props.reply.targetContent),
       time: util.dateFormat(this.$props.reply.createAt),
       like: this.$props.reply.like,
       id: this.$props.reply.id,
@@ -116,8 +122,10 @@ export default {
             })
             .then((res) => {
               const data = res.data;
-              if (!data.code) this.$message(util.success("删除成功"));
-              else this.$message(util.error(`删除失败，错误码：${data.code}`));
+              if (!data.code) {
+                this.$message(util.success("删除成功"));
+                this.$store.commit('incrementReplyKey');
+              } else this.$message(util.error(`删除失败，错误码：${data.code}`));
             });
         })
         .catch(() => {
@@ -132,4 +140,9 @@ export default {
 </script>
 
 <style>
+.reply {
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 1px dotted black;
+}
 </style>

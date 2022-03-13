@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import router from './router';
+import store from './store';
 import App from './App.vue';
 import ElementUI from 'element-ui';
 import axios from 'axios';
@@ -19,5 +20,5 @@ axios.interceptors.request.use(config => {
 });
 
 new Vue({
-  render: h => h(App), router 
+  render: h => h(App), router, store
 }).$mount('#app');

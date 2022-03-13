@@ -24,7 +24,7 @@
         <el-button
           size="mini"
           type="danger"
-          @click="handleDelete(scope.row.id)"
+          @click.native.stop="handleDelete(scope.row.id, scope.$index)"
         >
           删除
         </el-button>
@@ -44,7 +44,7 @@ export default {
     showUpdate: function () {
       return this.$props.type === "draft" || this.$props.type === "publish";
     },
-    handleDelete: function (id) {
+    handleDelete: function (id, index) {
       const accountId = util.getCurrentUser();
       const type = this.$props.type;
       let requestURL = `/remove/${accountId}/${type}/${id}`;
@@ -64,7 +64,7 @@ export default {
               const data = res.data;
               if (!data.code) {
                 this.$message(util.success("删除成功！"));
-                this.$forceUpdate();
+                this.$props.blogs.splice(index, 1);
               } else {
                 this.$message(util.error("删除失败！"));
               }

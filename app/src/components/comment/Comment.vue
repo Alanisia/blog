@@ -6,7 +6,7 @@
     <p>
       <el-button size="mini" type="danger" @click="remove" v-if="currentUser === this.$props.comment.accountId">
         删除
-      </el-button> 
+      </el-button>
       <el-button size="mini" @click="reply">回复</el-button>
       <el-button size="mini" @click="iLike" :style="liked ? 'background-color: #8ac4ff' : ''">点赞 {{ like }}</el-button>
       <span style="margin: auto 30px;">更新时间：{{ time }}</span>
@@ -42,8 +42,19 @@ export default {
       id: this.$props.comment.id,
       replies: [],
       replyHasExpended: false,
-      liked: false
+      liked: false,
+      replyKey: this.$store.state.replyKey
     };
+  },
+  // computed: {
+  //   replyKey: function () {
+  //     return ;
+  //   }
+  // },
+  watch: {
+    "$store.state.replyKey": function(n) {
+      this.replyKey = n;
+    }
   },
   created() {
     this.loadLiked();
@@ -127,14 +138,16 @@ export default {
             replyId: 0
           }).then(res => {
             const data = res.data;
-            if (!data.code) this.$message(util.success("删除成功"));
-            else this.$message(util.error(`删除失败，错误码：${data.code}`));
+            if (!data.code) {
+              this.$message(util.success("删除成功"));
+              this.$store.commit('incrementCommentKey');
+            } else this.$message(util.error(`删除失败，错误码：${data.code}`));
           });
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
+          });
         });
     }
   },

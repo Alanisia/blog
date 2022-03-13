@@ -1,16 +1,16 @@
 <template>
   <div>
-    <search />
+    <new-article/>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Search from "../common/Search";
+import NewArticle from "../common/NewArticle";
 
 export default {
   name: "Index",
-  components: { Search },
+  components: { NewArticle },
 };
 </script>
 

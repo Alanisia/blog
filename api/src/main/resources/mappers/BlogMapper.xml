@@ -33,6 +33,6 @@
       limit #{limit,jdbcType=INTEGER} offset #{offset,jdbcType=INTEGER}
   </select>
   <select id="search" resultMap="BlogResultMap">
-    select * from blog where title like %#{pattern,jdbcType=VARCHAR}%
+    select * from blog where title like #{pattern,jdbcType=VARCHAR}
   </select>
 </mapper>

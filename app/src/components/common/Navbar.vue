@@ -2,6 +2,7 @@
   <el-menu mode="horizontal" router>
     <el-menu-item index="/">首页</el-menu-item>
     <el-menu-item index="/categories">分类</el-menu-item>
+    <el-menu-item index="/search">搜索</el-menu-item>
     <template v-if="hasLogin">
       <el-menu-item index="/login" style="float: right" @click="logout">
         退出登录
