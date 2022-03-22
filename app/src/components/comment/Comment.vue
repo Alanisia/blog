@@ -1,37 +1,59 @@
 <template>
   <div class="comment">
     <div>
-    <p style="color: #409eff;"><strong>{{ username }}</strong></p>
-    <p v-html="content"></p>
-    <p>
-      <el-button size="mini" type="danger" @click="remove" v-if="currentUser === this.$props.comment.accountId">
-        删除
-      </el-button>
-      <el-button size="mini" @click="reply">回复</el-button>
-      <el-button size="mini" @click="iLike" :style="liked ? 'background-color: #8ac4ff' : ''">点赞 {{ like }}</el-button>
-      <span style="margin: auto 30px;">更新时间：{{ time }}</span>
-      <el-button @click="showReplies" v-if="replies.length > 0" style="float: right;" size="mini">
-        展开全部{{ replies.length }}条回复 <i :class="replyHasExpended ? 'el-icon-caret-bottom' : 'el-icon-caret-left'"></i>
-      </el-button>
-    </p>
+      <p style="color: #409eff">
+        <strong>{{ username }}</strong>
+      </p>
+      <p v-html="content"></p>
+      <p>
+        <el-button
+          size="mini"
+          type="danger"
+          @click="remove"
+          v-if="currentUser === this.$props.comment.accountId"
+        >
+          删除
+        </el-button>
+        <el-button size="mini" @click="reply">回复</el-button>
+        <el-button
+          size="mini"
+          @click="iLike"
+          :style="liked ? 'background-color: #8ac4ff' : ''"
+          >点赞 {{ like }}</el-button
+        >
+        <span style="margin: auto 30px">更新时间：{{ time }}</span>
+        <el-button
+          @click="showReplies"
+          v-if="replies.length > 0"
+          style="float: right"
+          size="mini"
+        >
+          展开全部{{ replies.length }}条回复
+          <i
+            :class="
+              replyHasExpended ? 'el-icon-caret-bottom' : 'el-icon-caret-left'
+            "
+          ></i>
+        </el-button>
+      </p>
     </div>
     <div v-if="replyHasExpended">
       <reply v-for="reply in replies" :key="reply.id" :reply="reply"></reply>
     </div>
-    <reply-dialog ref="replyDialog" :comment="this.$props.comment"/>
+    <reply-dialog ref="replyDialog" :comment="this.$props.comment" type="COMMENT"/>
   </div>
 </template>
 
 <script>
 import { marked } from "marked";
-import ReplyDialog from './ReplyDialog.vue';
-import axios from 'axios';
-import util from '../../util';
-import Reply from './Reply.vue';
+import ReplyDialog from "./ReplyDialog.vue";
+import axios from "axios";
+import util from "../../util";
+import Reply from "./Reply.vue";
 export default {
   components: { ReplyDialog, Reply },
   name: "Comment",
-  props: ['comment'],
+  props: ["comment"],
   data() {
     return {
       currentUser: util.getCurrentUser(),
@@ -43,18 +65,7 @@ export default {
       replies: [],
       replyHasExpended: false,
       liked: false,
-      replyKey: this.$store.state.replyKey
     };
-  },
-  // computed: {
-  //   replyKey: function () {
-  //     return ;
-  //   }
-  // },
-  watch: {
-    "$store.state.replyKey": function(n) {
-      this.replyKey = n;
-    }
   },
   created() {
     this.loadLiked();
@@ -65,7 +76,7 @@ export default {
       this.replyHasExpended = !this.replyHasExpended;
     },
     loadReplies: function () {
-      axios.get(`/replies?commentId=${this.id}`).then(res => {
+      axios.get(`/replies?commentId=${this.id}`).then((res) => {
         const data = res.data.data;
         this.replies = data;
       });
@@ -123,40 +134,45 @@ export default {
         }
       }
     },
-    reply: function() {
+    reply: function () {
       this.$refs.replyDialog.dialogVisible = true;
     },
     remove: function () {
-      this.$confirm('确定删除此评论?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          axios.post("/comment/delete", {
-            blogId: this.$props.comment.blogId,
-            commentId: this.id,
-            replyId: 0
-          }).then(res => {
-            const data = res.data;
-            if (!data.code) {
-              this.$message(util.success("删除成功"));
-              this.$store.commit('incrementCommentKey');
-            } else this.$message(util.error(`删除失败，错误码：${data.code}`));
-          });
-        }).catch(() => {
+      this.$confirm("确定删除此评论?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          axios
+            .post("/comment/delete", {
+              blogId: this.$props.comment.blogId,
+              commentId: this.id,
+              replyId: 0,
+            })
+            .then((res) => {
+              const data = res.data;
+              if (!data.code) {
+                this.$message(util.success("删除成功"));
+                this.$parent.loadComments();
+              } else
+                this.$message(util.error(`删除失败，错误码：${data.code}`));
+            });
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
+            type: "info",
+            message: "已取消删除",
           });
         });
-    }
+    },
   },
 };
 </script>
 
 <style scoped>
 .comment {
-  border: 1px solid #409EFF;
+  border: 1px solid #409eff;
   padding: 10px;
 }
 </style>

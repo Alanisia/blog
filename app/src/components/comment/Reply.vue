@@ -19,7 +19,7 @@
       <el-button size="mini" @click="iLike" :style="liked ? 'background-color: #8ac4ff' : ''">点赞 {{ like }}</el-button>
       <span style="float: right">更新时间：{{ time }}</span>
     </p>
-    <reply-dialog ref="replyDialog" :comment="this.$props.reply" />
+    <reply-dialog ref="replyDialog" :comment="this.$props.reply" type="REPLY"/>
   </div>
 </template>
 
@@ -124,7 +124,7 @@ export default {
               const data = res.data;
               if (!data.code) {
                 this.$message(util.success("删除成功"));
-                this.$store.commit('incrementReplyKey');
+                this.$parent.loadReplies();
               } else this.$message(util.error(`删除失败，错误码：${data.code}`));
             });
         })

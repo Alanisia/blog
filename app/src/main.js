@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import router from './router';
-import store from './store';
+// import store from './store';
 import App from './App.vue';
 import ElementUI from 'element-ui';
 import axios from 'axios';
@@ -16,9 +16,9 @@ axios.defaults.timeout = 5000;
 axios.interceptors.request.use(config => {
   const token = util.getToken();
   if (token && token.length > 0) config.headers.Authorization = token;
-  return config; 
+  return config;
 });
 
 new Vue({
-  render: h => h(App), router, store
+  render: h => h(App), router // , store
 }).$mount('#app');

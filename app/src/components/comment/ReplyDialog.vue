@@ -20,10 +20,11 @@ import axios from "axios";
 import util from "../../util";
 import CommonEditor from "../common/CommonEditor.vue";
 import Display from "../editor/Display.vue";
+
 export default {
   components: { CommonEditor, Display },
   name: "ReplyDialog",
-  props: ["comment"],
+  props: ["comment", "type"],
   data() {
     return {
       dialogVisible: false,
@@ -65,8 +66,10 @@ export default {
             const data = res.data;
             if (!data.code) {
               this.$message(util.success("回复成功！"));
+              const type = this.$props.type;
+              if (type === "COMMENT") this.$parent.loadReplies();
+              else if (type === "REPLY") this.$parent.$parent.loadReplies();
               this.dialogVisible = false;
-              this.$store.commit('incrementReplyKey');
             } else if (data.code === util.result.AUTHORIZE_FAILED) {
               this.$message(util.error("令牌已过期，请重新登录"));
               this.$router.push("/login");
