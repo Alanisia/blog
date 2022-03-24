@@ -127,7 +127,10 @@ create table `comment`(
     `content` text not null,
     `create_at` datetime not null default current_timestamp,
     primary key(`id`),
-    key `key_blog_id`(`blog_id`)
+    key `key_blog_id`(`blog_id`),
+    key `key_account_id`(`account_id`),
+    key `key_comment_id`(`comment_id`),
+    key `key_create_at`(`create_at`)
 )engine=InnoDB default charset=utf8mb4;
 
 drop table if exists `comment_like`;
