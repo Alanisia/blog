@@ -19,7 +19,10 @@
   <select id="replies" resultMap="CommentResultMap">
     select * from comment where comment_id = #{commentId,jdbcType=BIGINT}
   </select>
+  <select id="myComments" resultMap="CommentResultMap">
+    select * from comment where account_id = #{accountId,jdbcType=BIGINT}
+  </select>
   <select id="select" resultMap="CommentResultMap">
-    select * from comment where id = #{id,jdbcType=BIGINT}
+    select * from comment where id = #{id,jdbcType=BIGINT} order by create_at
   </select>
 </mapper>

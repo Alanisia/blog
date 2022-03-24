@@ -8,7 +8,6 @@ import alanisia.blog.service.BlogService;
 import alanisia.blog.service.UserService;
 import alanisia.blog.vo.AccountIdAndBlogId;
 import alanisia.blog.vo.UserDetailVO;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -82,5 +81,10 @@ public class UserController {
         throw new BusinessException(Result.UNKNOWN_ERROR);
     }
     return R.ok();
+  }
+
+  @GetMapping("/my_comment/{id}")
+  public R comments(@PathVariable("id") long id) {
+    return R.ok().setData(userService.getComments(id));
   }
 }

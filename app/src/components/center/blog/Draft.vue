@@ -2,7 +2,7 @@
   <div>
     <h3>博文草稿箱</h3>
     <p>共有数据{{ count }}条</p>
-    <blog-list :blogs="items" type="draft"/>
+    <blog-list :blogs="items" type="draft" ref="blogsRef" />
   </div>
 </template>
 
@@ -28,6 +28,9 @@ export default {
         const data = res.data.data;
         this.count = data.count;
         this.items = data.items;
+        this.$refs.blogsRef.total = this.count;
+        this.$refs.blogsRef.blogItems = this.items;
+        this.$refs.blogsRef.handleCurrentChange(1);
       });
     },
   },

@@ -4,6 +4,7 @@ import alanisia.blog.common.enums.Result;
 import alanisia.blog.common.util.JsonUtil;
 import alanisia.blog.dao.*;
 import alanisia.blog.dto.BlogItem;
+import alanisia.blog.dto.MyComment;
 import alanisia.blog.dto.UserDetailDTO;
 import alanisia.blog.exception.BusinessException;
 import alanisia.blog.model.*;
@@ -44,6 +45,17 @@ public class UserService {
         accountDao.update(id, account);
       }
     }
+  }
+
+  @Cacheable(cacheNames = "my_comments", key = "#id")
+  public List<MyComment> getComments(long id) {
+    List<Comment> comments = commentDao.myComments(id);
+    List<MyComment> myComments = new ArrayList<>();
+    comments.forEach(c -> myComments.add(new MyComment().setId(c.getId())
+      .setTarget(c.getTargetId() > 0 ? accountDao.select(c.getTargetId()).getUsername() : "")
+      .setTitle(blogDao.select(c.getBlogId()).getTitle())
+      .setBlogId(c.getBlogId()).setCreateAt(c.getCreateAt())));
+    return myComments;
   }
 
   @CacheEvict(cacheNames = "user_history", key = "#id", beforeInvocation = true)

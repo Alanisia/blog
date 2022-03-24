@@ -11,7 +11,7 @@
       </el-form-item>
     </el-form>
     <h1>搜索结果</h1>
-    <blog-list :blogs="result" /> 
+    <blog-list :blogs="resultPerPage" />
     <el-pagination
       @current-change="handleCurrentChange"
       :current-page="currentPage"
@@ -32,14 +32,22 @@ export default {
   data() {
     return {
       result: [],
+      resultPerPage: [],
       currentPage: 1,
+      total: 0,
       searchForm: {
         keyword: "",
       },
     };
   },
   methods: {
-    handleCurrentChange: function () {},
+    handleCurrentChange: function (val) {
+      let temp = [];
+      this.currentPage = val;
+      for (let i = (val - 1) * this.pageSize; i < this.total && i < val * this.pageSize; i++)
+        temp.push(this.result[i]);
+      this.resultPerPage = temp;
+    },
     search: function () {
       const keyword = this.searchForm.keyword;
       if (keyword.length === 0)
@@ -50,6 +58,8 @@ export default {
           if (!data.code) {
             const result = data.data;
             this.result = result;
+            this.total = this.result.length;
+            this.handleCurrentChange(1);
           } else util.error("搜索失败，请稍候重试！");
         });
     },

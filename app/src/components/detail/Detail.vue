@@ -59,7 +59,6 @@ export default {
         mdHtml: "",
       },
       comments: [],
-      // commentKey: this.$store.state.commentKey
     };
   },
   async created() {
@@ -75,9 +74,6 @@ export default {
     "commentForm.mdText": function () {
       this.commentForm.mdHtml = marked(this.commentForm.mdText);
     },
-    // "$store.state.commentKey": function (n) {
-    //   this.commentKey = n;
-    // }
   },
   methods: {
     display: function () {
