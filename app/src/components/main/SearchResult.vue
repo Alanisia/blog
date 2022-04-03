@@ -15,7 +15,7 @@
     <el-pagination
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-size="30"
+      :page-size="pageSize"
       layout="total, prev, pager, next, jumper"
       :total="total"
     ></el-pagination>
@@ -33,6 +33,7 @@ export default {
     return {
       result: [],
       resultPerPage: [],
+      pageSize: 30,
       currentPage: 1,
       total: 0,
       searchForm: {

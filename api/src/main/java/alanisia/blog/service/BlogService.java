@@ -59,21 +59,37 @@ public class BlogService {
     blogDao.delete(id);
   }
 
+  @Caching(evict = {
+    @CacheEvict(cacheNames = "newest", beforeInvocation = true),
+    @CacheEvict(cacheNames = "detail", key = "#accountIdAndBlogId.blogId", beforeInvocation = true)
+  })
   public void starBlog(AccountIdAndBlogId accountIdAndBlogId) {
     log.debug("star = {}", JsonUtil.json(accountIdAndBlogId));
     blogDao.star(accountIdAndBlogId.getAccountId(), accountIdAndBlogId.getBlogId());
   }
 
+  @Caching(evict = {
+    @CacheEvict(cacheNames = "newest", beforeInvocation = true),
+    @CacheEvict(cacheNames = "detail", key = "#accountIdAndBlogId.blogId", beforeInvocation = true)
+  })
   public void cancelStar(AccountIdAndBlogId accountIdAndBlogId) {
     log.debug("cancel star = {}", JsonUtil.json(accountIdAndBlogId));
     blogDao.cancelStar(accountIdAndBlogId.getAccountId(), accountIdAndBlogId.getBlogId());
   }
 
+  @Caching(evict = {
+    @CacheEvict(cacheNames = "newest", beforeInvocation = true),
+    @CacheEvict(cacheNames = "detail", key = "#accountIdAndBlogId.blogId", beforeInvocation = true)
+  })
   public void likeBlog(AccountIdAndBlogId accountIdAndBlogId) {
     log.debug("like = {}", JsonUtil.json(accountIdAndBlogId));
     blogDao.like(accountIdAndBlogId.getAccountId(), accountIdAndBlogId.getBlogId());
   }
 
+  @Caching(evict = {
+    @CacheEvict(cacheNames = "newest", beforeInvocation = true),
+    @CacheEvict(cacheNames = "detail", key = "#accountIdAndBlogId.blogId", beforeInvocation = true)
+  })
   public void cancelLike(AccountIdAndBlogId accountIdAndBlogId) {
     log.debug("cancel like = {}", JsonUtil.json(accountIdAndBlogId));
     blogDao.cancelLike(accountIdAndBlogId.getAccountId(), accountIdAndBlogId.getBlogId());

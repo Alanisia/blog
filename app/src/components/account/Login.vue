@@ -32,6 +32,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="login">登录</el-button>
+        <el-button @click="register">注册</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -92,6 +93,9 @@ export default {
     this.updateCaptcha();
   },
   methods: {
+    register: function () {
+      this.$router.push("/register");
+    },
     login: function () {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {

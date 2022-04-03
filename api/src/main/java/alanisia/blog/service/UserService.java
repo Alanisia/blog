@@ -150,10 +150,9 @@ public class UserService {
 
   private BlogItem item(GetBlogId b) {
     long blogId = b.getBlogId();
-    long accountId = b.getAccountId();
     Blog blog = blogDao.select(blogId);
     Category category = categoryDao.category(blog.getCategoryId());
-    Account account = accountDao.select(accountId);
+    Account account = accountDao.select(blog.getAccountId());
     return new BlogItem().setId(blog.getId()).setAuthor(account.getUsername()).setCategory(category.getName())
       .setTitle(blog.getTitle()).setLike(blogDao.likes(blog.getId())).setStar(blogDao.stars(blog.getId()))
       .setComment(commentDao.commentCount(blog.getId())).setUpdateAt(blog.getUpdateAt());

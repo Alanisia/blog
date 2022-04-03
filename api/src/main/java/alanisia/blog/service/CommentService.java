@@ -119,10 +119,20 @@ public class CommentService {
     return new CommentLiked().setLiked(commentDao.liked(accountId, commentId) > 0);
   }
 
+  @Caching(evict = {
+    @CacheEvict(cacheNames = "comments", key = "#commentLikeVO.commentId", beforeInvocation = true),
+    @CacheEvict(cacheNames = "replies", key = "#commentLikeVO.commentId", beforeInvocation = true),
+    @CacheEvict(cacheNames = "my_comment", key = "#commentLikeVO.accountId", beforeInvocation = true)
+  })
   public void like(CommentLikeVO commentLikeVO) {
     commentDao.like(commentLikeVO.getAccountId(), commentLikeVO.getCommentId());
   }
 
+  @Caching(evict = {
+    @CacheEvict(cacheNames = "comments", key = "#commentId", beforeInvocation = true),
+    @CacheEvict(cacheNames = "replies", key = "#commentId", beforeInvocation = true),
+    @CacheEvict(cacheNames = "my_comment", key = "#accountId", beforeInvocation = true)
+  })
   public void cancelLike(CommentLikeVO commentLikeVO) {
     commentDao.cancelLike(commentLikeVO.getAccountId(), commentLikeVO.getCommentId());
   }
