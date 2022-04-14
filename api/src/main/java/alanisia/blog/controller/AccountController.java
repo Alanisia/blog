@@ -5,6 +5,7 @@ import alanisia.blog.common.result.R;
 import alanisia.blog.dto.Token;
 import alanisia.blog.service.AccountService;
 import alanisia.blog.vo.Login;
+import alanisia.blog.vo.Logout;
 import alanisia.blog.vo.Register;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -35,8 +36,8 @@ public class AccountController {
   }
 
   @PostMapping("/logout")
-  public R logout(@RequestBody long id) {
-    accountService.logout(String.valueOf(id));
+  public R logout(@RequestBody Logout logout) {
+    accountService.logout(String.valueOf(logout.getId()));
     return R.ok();
   }
 }

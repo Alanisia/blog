@@ -1,7 +1,7 @@
 <template>
   <el-main>
     <h1 style="text-align: center">{{ blog.title }}</h1>
-    <legend style="text-align: center">分类：{{ blog.category }}</legend>
+    <legend style="text-align: center">作者：{{ blog.author }}/分类：{{ blog.category }}</legend>
     <div v-html="contentHTML"></div>
     <p>
       <span>更新时间：{{ blog.updateTime }}</span>
