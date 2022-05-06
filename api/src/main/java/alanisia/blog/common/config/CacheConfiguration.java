@@ -33,7 +33,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
   @Bean
   public CacheManager cacheManager(RedisTemplate<String, Object> redisTemplate) {
     RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration
-      .defaultCacheConfig().entryTtl(Duration.ofMinutes(5)).disableCachingNullValues();
+      .defaultCacheConfig().entryTtl(Duration.ofMinutes(1)).disableCachingNullValues();
     return RedisCacheManager.builder(Objects.requireNonNull(redisTemplate.getConnectionFactory()))
       .cacheDefaults(cacheConfiguration).build();
   }

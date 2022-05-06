@@ -87,7 +87,9 @@ export default {
         if (content === "") this.$message(util.error("博文不能为空！"));
         else {
           let requestURL =
-            this.type === "update" ? "/blog/update/publish" : "/blog/publish";
+            this.type === "update" || this.type === "draft"
+              ? "/blog/update/publish"
+              : "/blog/publish";
           let blog = {
             authorId: this.accountId,
             categoryId: this.editorForm.category,
@@ -96,7 +98,7 @@ export default {
             draft: 0,
           };
           let params =
-            this.type === "update"
+            this.type === "update" || this.type === "draft"
               ? {
                   id: this.blogId,
                   blog: blog,
@@ -109,8 +111,11 @@ export default {
               this.$message(util.error("令牌已过期，请重新登录"));
               this.$router.push("/login");
             } else {
-              this.$message(util.success(`${msg}成功`));
-              this.$router.push("/");
+              if (!data.code) {
+                this.$message(util.success(`${msg}成功`));
+                this.$router.push("/");
+              } else
+                this.$message(util.error(`${msg}错误，错误码：${data.code}`));
             }
           });
         }

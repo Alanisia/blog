@@ -154,7 +154,8 @@ export default {
               const data = res.data;
               if (!data.code) {
                 this.$message(util.success("删除成功"));
-                this.$parent.loadComments();
+                // console.log(this.$parent);
+                this.$parent.$parent.loadComments();
               } else
                 this.$message(util.error(`删除失败，错误码：${data.code}`));
             });

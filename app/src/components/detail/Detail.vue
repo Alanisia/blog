@@ -117,6 +117,7 @@ export default {
       axios.get(`/comments?blogId=${this.blog.id}`).then((res) => {
         const data = res.data.data;
         this.comments = data;
+        // this.blog.comments = data.length();
       });
     },
     star: function () {
@@ -230,6 +231,7 @@ export default {
               const data = res.data;
               if (!data.code) {
                 this.$message(util.success("评论成功！"));
+                this.loadBlog();
                 this.loadComments();
               } else if (data.code === util.result.AUTHORIZE_FAILED) {
                 this.$message(util.error("令牌已过期，请重新登录"));
@@ -237,6 +239,7 @@ export default {
               } else return new Error(`评论失败，错误码：${data.code}`);
             })
             .then(() => {
+              this.loadBlog();
               this.loadComments();
             })
             .catch((err) => {

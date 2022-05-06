@@ -93,7 +93,8 @@ export default {
               const data = res.data;
               if (!data.code) {
                 this.$message(util.success("删除成功！"));
-                blogItems.splice(index, 1);
+                this.blogItems.splice(index, 1);
+                this.total--;
                 this.handleCurrentChange(this.currentPage);
               } else {
                 this.$message(util.error("删除失败！"));
@@ -112,11 +113,13 @@ export default {
       this.$router.push(`/editor/${type}/${id}`);
     },
     dateFormat: function (row) {
+      console.log(row);
       return row.updateAt ? util.dateFormat(row.updateAt) : "";
     },
     rowClick: function (row) {
       let id = row.id;
-      this.$router.push(`/detail/${id}`);
+      if (this.type !== "draft")
+        this.$router.push(`/detail/${id}`);
     },
   },
 };

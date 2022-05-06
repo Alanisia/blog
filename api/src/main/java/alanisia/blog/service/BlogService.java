@@ -57,11 +57,13 @@ public class BlogService {
   public void deleteBlog(long id) {
     log.debug("delete blog: id = {}", id);
     blogDao.delete(id);
+    blogDao.removeHistories(id);
   }
 
   @Caching(evict = {
     @CacheEvict(cacheNames = "newest", beforeInvocation = true),
-    @CacheEvict(cacheNames = "blog_detail", key = "#accountIdAndBlogId.blogId", beforeInvocation = true)
+    @CacheEvict(cacheNames = "blog_detail", key = "#accountIdAndBlogId.blogId", beforeInvocation = true),
+    @CacheEvict(cacheNames = "user_star", key = "#accountIdAndBlogId.accountId", beforeInvocation = true)
   })
   public void starBlog(AccountIdAndBlogId accountIdAndBlogId) {
     log.debug("star = {}", JsonUtil.json(accountIdAndBlogId));
@@ -70,7 +72,8 @@ public class BlogService {
 
   @Caching(evict = {
     @CacheEvict(cacheNames = "newest", beforeInvocation = true),
-    @CacheEvict(cacheNames = "blog_detail", key = "#accountIdAndBlogId.blogId", beforeInvocation = true)
+    @CacheEvict(cacheNames = "blog_detail", key = "#accountIdAndBlogId.blogId", beforeInvocation = true),
+    @CacheEvict(cacheNames = "user_star", key = "#accountIdAndBlogId.accountId", beforeInvocation = true)
   })
   public void cancelStar(AccountIdAndBlogId accountIdAndBlogId) {
     log.debug("cancel star = {}", JsonUtil.json(accountIdAndBlogId));
@@ -107,11 +110,13 @@ public class BlogService {
     List<Blog> newestBlogs = blogDao.newest(50);
     List<BlogItem> items = new ArrayList<>();
     newestBlogs.forEach(blog -> {
-      BlogItem item = new BlogItem().setId(blog.getId()).setComment(commentDao.commentCount(blog.getId()))
-        .setStar(blogDao.stars(blog.getId())).setCategory(categoryDao.category(blog.getCategoryId()).getName())
-        .setTitle(blog.getTitle()).setUpdateAt(blog.getUpdateAt()).setLike(blogDao.likes(blog.getId()))
-        .setAuthor(accountDao.select(blog.getAccountId()).getUsername());
-      items.add(item);
+      if (blog.getDraft() == 0) {
+        BlogItem item = new BlogItem().setId(blog.getId()).setComment(commentDao.commentCount(blog.getId()))
+          .setStar(blogDao.stars(blog.getId())).setCategory(categoryDao.category(blog.getCategoryId()).getName())
+          .setTitle(blog.getTitle()).setUpdateAt(blog.getUpdateAt()).setLike(blogDao.likes(blog.getId()))
+          .setAuthor(accountDao.select(blog.getAccountId()).getUsername());
+        items.add(item);
+      }
     });
     return items;
   }
@@ -125,11 +130,13 @@ public class BlogService {
       .setPages((id == 0 ? blogDao.count() : blogDao.countOfCategory(id)) % limit + 1);
     List<BlogItem> items = new ArrayList<>();
     blogs.forEach(blog -> {
-      BlogItem item = new BlogItem().setId(blog.getId()).setLike(blogDao.likes(blog.getId()))
-        .setCategory(categoryDao.category(blog.getCategoryId()).getName()).setUpdateAt(blog.getUpdateAt())
-        .setAuthor(accountDao.select(blog.getAccountId()).getUsername()).setStar(blogDao.stars(blog.getId()))
-        .setTitle(blog.getTitle()).setComment(commentDao.commentCount(blog.getId()));
-      items.add(item);
+      if (blog.getDraft() == 0) {
+        BlogItem item = new BlogItem().setId(blog.getId()).setLike(blogDao.likes(blog.getId()))
+          .setCategory(categoryDao.category(blog.getCategoryId()).getName()).setUpdateAt(blog.getUpdateAt())
+          .setAuthor(accountDao.select(blog.getAccountId()).getUsername()).setStar(blogDao.stars(blog.getId()))
+          .setTitle(blog.getTitle()).setComment(commentDao.commentCount(blog.getId()));
+        items.add(item);
+      }
     });
     return p.setItems(items);
   }
@@ -152,11 +159,13 @@ public class BlogService {
     log.debug("search pattern = {}", pattern);
     List<BlogItem> items = new ArrayList<>();
     blogDao.search("%" + pattern + "%").forEach(b -> {
-      BlogItem item = new BlogItem().setId(b.getId()).setTitle(b.getTitle()).setLike(blogDao.likes(b.getId()))
-        .setAuthor(accountDao.select(b.getAccountId()).getUsername()).setComment(commentDao.commentCount(b.getId()))
-        .setCategory(categoryDao.category(b.getCategoryId()).getName()).setStar(blogDao.stars(b.getId()))
-        .setUpdateAt(b.getUpdateAt());
-      items.add(item);
+      if (b.getDraft() == 0) {
+        BlogItem item = new BlogItem().setId(b.getId()).setTitle(b.getTitle()).setLike(blogDao.likes(b.getId()))
+          .setAuthor(accountDao.select(b.getAccountId()).getUsername()).setComment(commentDao.commentCount(b.getId()))
+          .setCategory(categoryDao.category(b.getCategoryId()).getName()).setStar(blogDao.stars(b.getId()))
+          .setUpdateAt(b.getUpdateAt());
+        items.add(item);
+      }
     });
     return items;
   }

@@ -24,7 +24,7 @@ export default {
   data() {
     return {
       categories: [],
-      hasLogin: util.getToken() !== "",
+      hasLogin: !!util.getToken(),
     };
   },
   methods: {

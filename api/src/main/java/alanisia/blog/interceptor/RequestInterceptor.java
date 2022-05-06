@@ -11,7 +11,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @Slf4j
 @Component
@@ -20,7 +19,7 @@ public class RequestInterceptor implements HandlerInterceptor {
   private AccountService accountService;
 
   @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
     if (HttpMethod.OPTIONS.toString().equals(request.getMethod())) {
       response.setStatus(HttpServletResponse.SC_OK);
       return true;

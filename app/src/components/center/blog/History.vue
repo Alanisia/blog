@@ -2,7 +2,7 @@
   <div>
     <h3>博文浏览历史</h3>
     <p>共有数据{{ count }}条</p>
-    <blog-list :blogs="items" type="history" ref="blogsRef"/>
+    <blog-list :blogs="items" type="history" ref="blogsRef" />
   </div>
 </template>
 

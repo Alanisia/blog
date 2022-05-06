@@ -61,4 +61,7 @@ public interface BlogDao {
   int countOfCategory(@Param("id") int id);
 
   List<Blog> search(String pattern);
+
+  @Delete("delete from blog_history where blog_id = #{blogId}")
+  void removeHistories(@Param("blogId") long blogId);
 }

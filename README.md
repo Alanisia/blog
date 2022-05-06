@@ -23,5 +23,6 @@ Frontend is written in Vue while backend is in Spring Boot.
 
   ```bash
   cd api
-  mvn clean package
+  mvn clean package -DskipTests # skip tests and build for development environment
+  mvn clean package -DskipTests -P prod # skip tests and build for production environment
   ```
