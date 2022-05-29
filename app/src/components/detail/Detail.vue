@@ -117,7 +117,7 @@ export default {
       axios.get(`/comments?blogId=${this.blog.id}`).then((res) => {
         const data = res.data.data;
         this.comments = data;
-        // this.blog.comments = data.length();
+        this.blog.comments = data.length;
       });
     },
     star: function () {

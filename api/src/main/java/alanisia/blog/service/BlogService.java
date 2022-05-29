@@ -58,6 +58,7 @@ public class BlogService {
     log.debug("delete blog: id = {}", id);
     blogDao.delete(id);
     blogDao.removeHistories(id);
+    commentDao.deleteByBlogId(id);
   }
 
   @Caching(evict = {
