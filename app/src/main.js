@@ -9,7 +9,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 Vue.config.productionTip = false;
 
-axios.defaults.baseURL = 'http://127.0.0.1:9305';
+axios.defaults.baseURL = 'http://42.194.221.68:9304';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.timeout = 5000;
 axios.interceptors.request.use(config => {

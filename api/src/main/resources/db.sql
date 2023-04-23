@@ -83,7 +83,7 @@ create table `blog`(
     `create_at` datetime not null default current_timestamp,
     `update_at` datetime not null default current_timestamp on update current_timestamp,
     primary key(`id`),
-    key `key_account_id`(`account_id`),
+    key `key_account_id`(`account_id`)
 )engine=InnoDB default charset=utf8mb4;
 
 drop table if exists `star_blog`;
